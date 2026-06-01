@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S4 English: Parts of Speech Revision App</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    },
+                    boxShadow: {
+                        'premium': '0 10px 30px -10px rgba(124, 58, 237, 0.15), 0 1px 3px rgba(0, 0, 0, 0.05)',
+                        'card': '0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 10px -1px rgba(0, 0, 0, 0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        .pulse-correct {
+            animation: pulse-green 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-green {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+        }
+
+        .shake-incorrect {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            15%, 45%, 75% { transform: translateX(-8px); }
+            30%, 60%, 90% { transform: translateX(8px); }
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c7d2fe;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #818cf8;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-slate-50 to-purple-50 min-h-full font-sans text-slate-800 antialiased flex flex-col">
+
+    <!-- Global App Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-indigo-100 sticky top-0 z-40 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goToLobby()">
+                <div class="bg-brand-600 text-white p-2 rounded-xl shadow-md shadow-brand-500/20">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold bg-gradient-to-r from-brand-700 to-indigo-700 bg-clip-text text-transparent">F.4 Grammar Hub</h1>
+                    <p class="text-xs text-slate-400 font-semibold tracking-wide uppercase">Parts of Speech Mastery</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleStudyGuide()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50/50 hover:bg-indigo-100/70 text-indigo-700 text-sm font-semibold transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    <span>Revision Guide</span>
+                </button>
+                <button onclick="toggleBookmarkedModal()" class="relative p-2 rounded-lg text-slate-500 hover:text-brand-600 hover:bg-slate-100 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                    <span id="bookmark-badge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8 flex flex-col justify-center">
+        
+        <!-- ================= LOBBY SCREEN ================= -->
+        <div id="lobby-screen" class="space-y-8 animate-fade-in">
+            <!-- Hero Announcement -->
+            <div class="text-center max-w-2xl mx-auto space-y-4">
+                <span class="px-3 py-1 bg-brand-100 text-brand-700 text-xs font-bold tracking-widest uppercase rounded-full">Primary & Secondary Prep</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800 leading-tight">
+                    Level Up Your <span class="bg-gradient-to-r from-brand-600 to-indigo-600 bg-clip-text text-transparent">Grammar Skills</span>
+                </h2>
+                <p class="text-slate-500 md:text-base max-w-lg mx-auto">
+                    Master the 10 core Parts of Speech with adaptive questions curated directly from your F.4 syllabus notes and assessments.
+                </p>
+            </div>
+
+            <!-- Mode Selector Cards -->
+            <div class="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                <!-- Classic Mode -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-card hover:shadow-premium hover:-translate-y-1 transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center mb-4 group-hover:bg-brand-600 group-hover:text-white transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">Classic Challenge</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Practice 15 curriculum-aligned questions at your own pace with rich study explanations.</p>
+                    </div>
+                    <button onclick="startQuiz('classic')" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm rounded-xl transition-all shadow-md shadow-brand-500/10">Play Classic</button>
+                </div>
+
+                <!-- Survival Mode -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-card hover:shadow-premium hover:-translate-y-1 transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mb-4 group-hover:bg-rose-600 group-hover:text-white transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">Sudden Death</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Start with 3 lives. The game keeps going as long as you keep choosing correct answers!</p>
+                    </div>
+                    <button onclick="startQuiz('survival')" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm rounded-xl transition-all shadow-md shadow-rose-500/10">Play Survival</button>
+                </div>
+
+                <!-- Time Attack Mode -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-card hover:shadow-premium hover:-translate-y-1 transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-4 group-hover:bg-amber-600 group-hover:text-white transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">Time Blitz</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">60-second race! Fast correct choices give you extra time (+3s), but incorrect ones penalize you (-5s).</p>
+                    </div>
+                    <button onclick="startQuiz('time')" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm rounded-xl transition-all shadow-md shadow-amber-500/10">Play Blitz</button>
+                </div>
+            </div>
+
+            <!-- Student Progress Quick Summary -->
+            <div id="stats-dashboard" class="max-w-xl mx-auto bg-white border border-indigo-50 rounded-2xl p-5 shadow-card hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="font-bold text-slate-800 text-sm">Your Personal Progress</h4>
+                    <button onclick="clearSaves()" class="text-[11px] text-slate-400 hover:text-rose-500 underline transition-all">Reset All Records</button>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="bg-slate-50 rounded-xl p-3">
+                        <span class="block text-xl font-black text-brand-600" id="stat-classic-score">-</span>
+                        <span class="text-[10px] uppercase tracking-wide font-semibold text-slate-400">Best Classic</span>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-3">
+                        <span class="block text-xl font-black text-rose-500" id="stat-survival-score">-</span>
+                        <span class="text-[10px] uppercase tracking-wide font-semibold text-slate-400">Max Survival</span>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-3">
+                        <span class="block text-xl font-black text-amber-500" id="stat-time-score">-</span>
+                        <span class="text-[10px] uppercase tracking-wide font-semibold text-slate-400">Best Blitz Score</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= QUIZ PLAY SCREEN ================= -->
+        <div id="quiz-screen" class="hidden max-w-2xl mx-auto w-full space-y-6">
+            <!-- Quiz Status Headers -->
+            <div class="flex items-center justify-between bg-white px-5 py-3.5 rounded-2xl border border-slate-100 shadow-card">
+                <!-- Question Number/Progression -->
+                <div class="flex items-center space-x-3">
+                    <div id="status-indicator-icon" class="bg-brand-50 text-brand-600 p-2 rounded-xl">
+                        <!-- Icon swapped dynamically -->
+                    </div>
+                    <div>
+                        <span id="question-index" class="text-xs font-bold text-slate-400 uppercase tracking-widest block">Question 1 of 15</span>
+                        <span id="mode-text" class="text-sm font-extrabold text-slate-800">Classic Challenge</span>
+                    </div>
+                </div>
+
+                <!-- Live stats: Survival (Hearts) / Time (Clock) -->
+                <div class="flex items-center space-x-4">
+                    <!-- Lives Container -->
+                    <div id="lives-container" class="hidden flex items-center space-x-1">
+                        <div class="heart text-rose-500 text-xl font-bold">❤️</div>
+                        <div class="heart text-rose-500 text-xl font-bold">❤️</div>
+                        <div class="heart text-rose-500 text-xl font-bold">❤️</div>
+                    </div>
+                    <!-- Timer Container -->
+                    <div id="timer-container" class="hidden flex items-center space-x-2 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-xl border border-amber-100 font-black tracking-wide">
+                        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span id="timer-countdown" class="text-sm">60s</span>
+                    </div>
+                    <!-- Streak Indicator -->
+                    <div id="streak-container" class="hidden flex items-center space-x-1 bg-amber-100 text-amber-800 px-2 py-1 rounded-lg text-xs font-bold">
+                        <span>🔥</span> <span id="streak-count">0</span>
+                    </div>
+                    <!-- Bookmark trigger -->
+                    <button id="bookmark-btn" onclick="toggleCurrentBookmark()" class="text-slate-400 hover:text-amber-500 p-2 rounded-xl hover:bg-slate-50 transition-all">
+                        <svg id="bookmark-svg" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="quiz-progress-wrapper" class="w-full bg-slate-200 h-2 rounded-full overflow-hidden shadow-inner">
+                <div id="quiz-progress-bar" class="bg-gradient-to-r from-brand-500 to-indigo-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div id="question-card" class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-premium relative transition-all duration-300">
+                <!-- Level Indicator -->
+                <span id="difficulty-badge" class="absolute top-4 right-6 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-emerald-50 text-emerald-700 border border-emerald-100">Medium</span>
+                
+                <!-- Target Sentence with Underlined word -->
+                <div class="space-y-6 pt-4">
+                    <p class="text-xs text-slate-400 font-bold tracking-wide uppercase">Sentence Context</p>
+                    <div class="text-xl md:text-2xl font-bold text-slate-800 leading-relaxed text-center py-6 px-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200" id="sentence-container">
+                        The boy <u class="underline decoration-brand-500 decoration-4 underline-offset-8 text-brand-700 font-extrabold select-none">runs</u> happily.
+                    </div>
+                    
+                    <h3 class="text-base font-semibold text-slate-700 text-center">
+                        What is the Part of Speech of the <span class="text-brand-600 font-bold">underlined</span> word?
+                    </h3>
+                </div>
+
+                <!-- Answer Choices Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8" id="choices-grid">
+                    <!-- Dynamic option buttons go here -->
+                </div>
+            </div>
+
+            <!-- Feedbacks Modal/Card -->
+            <div id="feedback-card" class="hidden bg-white border rounded-3xl p-6 shadow-premium transition-all duration-300">
+                <div class="flex items-start space-x-4">
+                    <div id="feedback-icon-bg" class="p-3 rounded-2xl">
+                        <svg id="feedback-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                    </div>
+                    <div class="flex-grow space-y-1">
+                        <h4 id="feedback-title" class="text-lg font-extrabold">Correct! Great Job!</h4>
+                        <p id="feedback-description" class="text-sm text-slate-500 leading-relaxed"></p>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button onclick="handleNextQuestion()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm rounded-xl flex items-center space-x-2 transition-all">
+                        <span>Next Question</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= RESULTS SCREEN ================= -->
+        <div id="results-screen" class="hidden max-w-2xl mx-auto w-full space-y-6 animate-fade-in">
+            <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-premium text-center space-y-6">
+                <!-- Success Medal or Emoji -->
+                <div class="relative inline-block">
+                    <div class="w-24 h-24 bg-gradient-to-tr from-yellow-300 to-amber-500 text-white rounded-full flex items-center justify-center text-4xl shadow-lg shadow-amber-500/20 mx-auto" id="results-emblem">
+                        🏆
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <h2 class="text-3xl font-black text-slate-800" id="results-headline">Fantastic Performance!</h2>
+                    <p class="text-slate-500 text-sm max-w-md mx-auto" id="results-subtitle">You have completed the parts of speech diagnostic revision.</p>
+                </div>
+
+                <!-- Stats Summary -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-md mx-auto py-4">
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+                        <span class="block text-2xl font-black text-brand-600" id="res-score">12/15</span>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Final Score</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+                        <span class="block text-2xl font-black text-emerald-500" id="res-accuracy">80%</span>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Accuracy</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+                        <span class="block text-2xl font-black text-amber-500" id="res-streak">5</span>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Best Streak</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+                        <span class="block text-2xl font-black text-indigo-500" id="res-time">4m 23s</span>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Time Taken</span>
+                    </div>
+                </div>
+
+                <!-- Advanced Analytics (Performance Breakdown) -->
+                <div class="max-w-md mx-auto bg-slate-50/50 rounded-2xl border border-slate-100 p-5 text-left space-y-3">
+                    <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Analysis of Strengths & Weaknesses</h4>
+                    <div id="analytics-bars" class="space-y-2.5">
+                        <!-- Instantiated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                    <button onclick="goToLobby()" class="w-full sm:w-auto px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all">
+                        Back to Menu
+                    </button>
+                    <button onclick="restartQuizWithSameSettings()" class="w-full sm:w-auto px-8 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-brand-500/10">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-slate-950 text-slate-500 py-6 text-center text-xs mt-auto border-t border-slate-900">
+        <div class="max-w-6xl mx-auto px-4 space-y-2">
+            <p>Made for Secondary 4 / Year 10 Revision &mdash; Interactive Educational App</p>
+            <p>&copy; 2026. All rights reserved. Meets HK DSE Curriculum & Key English Syllabus Benchmarks.</p>
+        </div>
+    </footer>
+
+    <!-- ================= BOOKMARKS OVERLAY MODAL ================= -->
+    <div id="bookmark-modal" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl border border-indigo-100 flex flex-col max-h-[85vh] overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl">⭐</span>
+                    <h3 class="text-xl font-bold text-slate-800">Your Bookmarked Questions</h3>
+                </div>
+                <button onclick="toggleBookmarkedModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div id="bookmark-list" class="p-6 overflow-y-auto custom-scrollbar flex-grow space-y-4">
+                <!-- Dynamically listed bookmarks -->
+            </div>
+
+            <div class="p-5 border-t border-slate-100 bg-slate-50 flex justify-end space-x-3">
+                <button onclick="clearAllBookmarks()" class="px-4 py-2 text-rose-600 hover:bg-rose-50 font-bold text-xs rounded-xl transition-all">Clear All</button>
+                <button onclick="toggleBookmarkedModal()" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition-all">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= STUDY GUIDE / SLIDE TRANSCRIPT PANEL (DRAWER) ================= -->
+    <div id="study-guide-drawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-brand-600 to-indigo-600 text-white">
+            <div>
+                <h3 class="text-lg font-bold">10 Parts of Speech Notes</h3>
+                <p class="text-[11px] opacity-80 uppercase tracking-widest font-semibold">Secondary 4 Reference Syllabus</p>
+            </div>
+            <button onclick="toggleStudyGuide()" class="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto custom-scrollbar flex-grow space-y-6">
+            <!-- Search bar -->
+            <div>
+                <input type="text" id="guide-search" oninput="searchStudyGuide()" placeholder="Search grammatical terms..." class="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            </div>
+
+            <!-- Notes Modules -->
+            <div id="study-guide-content" class="space-y-4">
+                <!-- 1. Noun -->
+                <div class="guide-item border border-slate-100 rounded-2xl p-4 bg-slate-50 hover:bg-white hover:border-brand-100 hover:shadow-card transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Part 1</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-semibold rounded">Noun (N.)</span>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm mb-1">Noun</h4>
+                    <p class="text-xs text-slate-500 mb-2">The name of a person, place, thing, animal, or abstract concept.</p>
+                    <div class="text-[11px] bg-slate-100/70 p-2.5 rounded-lg space-y-1">
+                        <p><strong>Countable:</strong> chairs, children, books, facilities</p>
+                        <p><strong>Uncountable:</strong> advice, information, equipment, knowledge, beauty</p>
+                        <p class="italic text-slate-400 mt-1">E.g., "John lives in Sai Kung."</p>
+                    </div>
+                </div>
+
+                <!-- 2. Verb -->
+                <div class="guide-item border border-slate-100 rounded-2xl p-4 bg-slate-50 hover:bg-white hover:border-brand-100 hover:shadow-card transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Part 2</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-semibold rounded">Verb (V.)</span>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm mb-1">Verb</h4>
+                    <p class="text-xs text-slate-500 mb-2">A word that shows action, state of being, or physical occurrence.</p>
+                    <div class="text-[11px] bg-slate-100/70 p-2.5 rounded-lg space-y-1">
+                        <p><strong>Action Verb:</strong> run, started, complete</p>
+                        <p><strong>State of Being:</strong> is, was, seem, feel</p>
+                        <p class="italic text-slate-400 mt-1">E.g., "The baby is smiling."</p>
+                    </div>
+                </div>
+
+                <!-- 3. Adjective -->
+                <div class="guide-item border border-slate-100 rounded-2xl p-4 bg-slate-50 hover:bg-white hover:border-brand-100 hover:shadow-card transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Part 3</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-semibold rounded">Adjective (Adj.)</span>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm mb-1">Adjective</h4>
+                    <p class="text-xs text-slate-500 mb-2">Describes, qualifies, or modifies a noun or pronoun.</p>
+                    <div class="text-[11px] bg-slate-100/70 p-2.5 rounded-lg space-y-1">
+                        <p><strong>Usage:</strong> Junk food is cheap but <span class="underline">unhealthy</span>.</p>
+                        <p><strong>-ed vs -ing forms:</strong> He felt <span class="underline">disappointed</span> versus The movie was <span class="underline">boring</span>.</p>
+                        <p class="italic text-slate-400 mt-1">E.g., "The fat boy walked."</p>
+                    </div>
+                </div>
+
+                <!-- 4. Adverb -->
+                <div class="guide-item border border-slate-100 rounded-2xl p-4 bg-slate-50 hover:bg-white hover:border-brand-100 hover:shadow-card transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Part 4</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-semibold rounded">Adverb (Adv.)</span>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm mb-1">Adverb</h4>
+                    <p class="text-xs text-slate-500 mb-2">Modifies or describes a verb, an adjective, or another adverb.</p>
+                    <div class="text-[11px] bg-slate-100/70 p-2.5 rounded-lg space-y-1">
+                        <p><strong>Modifying verbs:</strong> A snail moves <span class="underline">slowly</span>.</p>
+                        <p><strong>Modifying adjectives:</strong> She is <span class="underline">very</span> lazy.</p>
+                        <p class="italic text-slate-400 mt-1">E.g., "The protective screen is put temporarily."</p>
+                    </div>
+                </div>
+
+                <!-- 5. Pronoun -->
+                <div class="guide-item border border-slate-100 rounded-2xl p-4 bg-slate-50 hover:bg-white hover:border-brand-100 hover:shadow-card transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Part 5</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-semibold rounded">Pronoun (Pron.)</span>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm mb-1">Pronoun</h4>
+                    <p class="text-xs text-slate-500 mb-2">Used in place of a noun to avoid unnecessary repetition.</p>
+                    <div class="text-[11px] bg-slate-100/70 p-2.5 rounded-lg space-y-1">
+                        <p><strong>Personal:</strong> he, she, it, they, us, him</p>
+                        <p><strong>Reflexive / Intensive:</strong> myself, himself, itself</p>
+                        <p class="italic text-slate-400 mt-1">E.g., "The manager himself signed the contract."</p>
+                    </div>
+                </div>
+
+                <!-- 6. Preposition -->
+                <div class="guide-item border border-slate-100 rounded-2xl p-4 bg-slate-50 hover:bg-white hover:border-brand-100 hover:shadow-card transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Part 6</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-semibold rounded">Preposition (Prep.)</span>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm mb-1">Preposition</h4>
+                    <p class="text-xs text-slate-500 mb-2">Shows temporal, spatial, or logical relationships between nouns/pronouns and other words.</p>
+                    <div class="text-[11px] bg-slate-100/70 p-2.5 rounded-lg space-y-1">
+                        <p><strong>Examples:</strong> round, inside, before, in, with, on, under</p>
+                        <p class="italic text-slate-400 mt-1">E.g., "Some employers fail to provide screens round machines."</p>
+                    </div>
+                </div>
+
+                <!-- 7. Conjunction -->
+                <div class="guide-item border border-slate-100 rounded-2xl p-4 bg-slate-50 hover:bg-white hover:border-brand-100 hover:shadow-card transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Part 7</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-semibold rounded">Conjunction (Conj.)</span>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm mb-1">Conjunction</h4>
+                    <p class="text-xs text-slate-500 mb-2">Connects clauses, words, sentences, or coordinating phrases.</p>
+                    <div class="text-[11px] bg-slate-100/70 p-2.5 rounded-lg space-y-1">
+                        <p><strong>Coordinating:</strong> but, and, or, yet, so</p>
+                        <p><strong>Subordinating:</strong> because, although, since, unless</p>
+                        <p class="italic text-slate-400 mt-1">E.g., "John lives in Sai Kung but he works in Central."</p>
+                    </div>
+                </div>
+
+                <!-- 8. Article -->
+                <div class="guide-item border border-slate-100 rounded-2xl p-4 bg-slate-50 hover:bg-white hover:border-brand-100 hover:shadow-card transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Part 8</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-semibold rounded">Article (Art.)</span>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm mb-1">Article</h4>
+                    <p class="text-xs text-slate-500 mb-2">Determines whether a noun is specific or general.</p>
+                    <div class="text-[11px] bg-slate-100/70 p-2.5 rounded-lg space-y-1">
+                        <p><strong>Indefinite:</strong> a, an (non-specific, general)</p>
+                        <p><strong>Definite:</strong> the (specifically pointed to or previously mentioned)</p>
+                        <p class="italic text-slate-400 mt-1">E.g., "She bought an interesting book."</p>
+                    </div>
+                </div>
+
+                <!-- 9. Demonstrative -->
+                <div class="guide-item border border-slate-100 rounded-2xl p-4 bg-slate-50 hover:bg-white hover:border-brand-100 hover:shadow-card transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Part 9</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-semibold rounded">Demonstrative</span>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm mb-1">Demonstrative</h4>
+                    <p class="text-xs text-slate-500 mb-2">Identifies or points out a specific noun or pronoun.</p>
+                    <div class="text-[11px] bg-slate-100/70 p-2.5 rounded-lg space-y-1">
+                        <p><strong>Singular:</strong> this, that</p>
+                        <p><strong>Plural:</strong> these, those</p>
+                        <p class="italic text-slate-400 mt-1">E.g., "Those books belong to the library."</p>
+                    </div>
+                </div>
+
+                <!-- 10. Interjection -->
+                <div class="guide-item border border-slate-100 rounded-2xl p-4 bg-slate-50 hover:bg-white hover:border-brand-100 hover:shadow-card transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Part 10</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-semibold rounded">Interjection</span>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm mb-1">Interjection</h4>
+                    <p class="text-xs text-slate-500 mb-2">An abrupt remark, exclamation, or vocalized emotion.</p>
+                    <div class="text-[11px] bg-slate-100/70 p-2.5 rounded-lg space-y-1">
+                        <p><strong>Examples:</strong> Wow! Ouch! Oh! Gosh!</p>
+                        <p class="italic text-slate-400 mt-1">E.g., "Ouch! The soup is burning hot!"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background overlay for study guide -->
+    <div id="drawer-overlay" onclick="toggleStudyGuide()" class="hidden fixed inset-0 z-40 bg-slate-950/20 backdrop-blur-[1px] transition-all"></div>
+
+    <!-- JS Logic -->
+    <script>
+        // Question Database (Year 10 level & based on F.4 PPT/Notes content)
+        const allQuestions = [
+            {
+                id: 1,
+                sentence: "The beautiful beaches are the island’s main <span class='target'>attraction</span>.",
+                word: "attraction",
+                answer: "Noun",
+                options: ["Noun", "Verb", "Adjective", "Adverb"],
+                difficulty: "Easy",
+                explanation: "'Attraction' acts as a noun here. It follows the possessive noun ('island's') and the adjective 'main', which is a classic grammatical marker for a noun."
+            },
+            {
+                id: 2,
+                sentence: "The story has <span class='target'>attracted</span> a lot of interest from the media.",
+                word: "attracted",
+                answer: "Verb",
+                options: ["Noun", "Verb", "Adjective", "Pronoun"],
+                difficulty: "Easy",
+                explanation: "'Attracted' is the past participle form of the verb 'attract', completing the present perfect verb construct 'has attracted'."
+            },
+            {
+                id: 3,
+                sentence: "I can see he’s handsome, but I don’t find him very <span class='target'>attractive</span>.",
+                word: "attractive",
+                answer: "Adjective",
+                options: ["Noun", "Verb", "Adjective", "Adverb"],
+                difficulty: "Easy",
+                explanation: "'Attractive' is an adjective here. It is used as an object complement modifying the pronoun 'him'."
+            },
+            {
+                id: 4,
+                sentence: "Inspectors regularly visit factories to check on workers' <span class='target'>safety</span> precautions.",
+                word: "safety",
+                answer: "Noun",
+                options: ["Noun", "Verb", "Adjective", "Preposition"],
+                difficulty: "Medium",
+                explanation: "Although 'safety' works here to modify 'precautions', 'safety' is a noun being used as a noun adjunct (or noun modifier). In fundamental classifications, it is categorized as a noun."
+            },
+            {
+                id: 5,
+                sentence: "The protective screens are put <span class='target'>round</span> machines temporarily.",
+                word: "round",
+                answer: "Preposition",
+                options: ["Preposition", "Conjunction", "Adjective", "Noun"],
+                difficulty: "Medium",
+                explanation: "'Round' acts as a preposition showing the physical placement/relation of the screens to the machines."
+            },
+            {
+                id: 6,
+                sentence: "These visiting checks are necessary because some employers fail to protect workers <span class='target'>adequately</span>.",
+                word: "adequately",
+                answer: "Adverb",
+                options: ["Noun", "Adjective", "Adverb", "Conjunction"],
+                difficulty: "Easy",
+                explanation: "'Adequately' is an adverb ending in '-ly' that describes how the protection verb action ('protect') is carried out."
+            },
+            {
+                id: 7,
+                sentence: "Many workers are hurt or <span class='target'>killed</span> by terrible accidents involving machinery.",
+                word: "killed",
+                answer: "Verb",
+                options: ["Noun", "Verb", "Adjective", "Preposition"],
+                difficulty: "Medium",
+                explanation: "'Killed' is a passive verb here representing the passive voice construct ('are hurt or killed')."
+            },
+            {
+                id: 8,
+                sentence: "Sometimes women are <span class='target'>seriously</span> injured when their clothes are pulled into a machine.",
+                word: "seriously",
+                answer: "Adverb",
+                options: ["Adjective", "Adverb", "Noun", "Pronoun"],
+                difficulty: "Easy",
+                explanation: "'Seriously' is an adverb modifying the past participle adjective/verb 'injured'."
+            },
+            {
+                id: 9,
+                sentence: "In a number of small factories, old and <span class='target'>dangerous</span> machines are still used.",
+                word: "dangerous",
+                answer: "Adjective",
+                options: ["Noun", "Verb", "Adjective", "Adverb"],
+                difficulty: "Easy",
+                explanation: "'Dangerous' is an adjective ending with '-ous' that describes the machines (noun)."
+            },
+            {
+                id: 10,
+                sentence: "They are put round machines temporarily <span class='target'>but</span> are removed as soon as inspections are completed.",
+                word: "but",
+                answer: "Conjunction",
+                options: ["Preposition", "Conjunction", "Interjection", "Adverb"],
+                difficulty: "Easy",
+                explanation: "'But' is a coordinating conjunction linking the two parts of the compound predicate."
+            },
+            {
+                id: 11,
+                sentence: "John lives in Sai Kung and he can play the piano <span class='target'>well</span>.",
+                word: "well",
+                answer: "Adverb",
+                options: ["Adjective", "Adverb", "Noun", "Verb"],
+                difficulty: "Medium",
+                explanation: "'Well' is an adverb of manner here, describing *how* John plays the piano."
+            },
+            {
+                id: 12,
+                sentence: "Many students cannot get <span class='target'>satisfaction</span> at school.",
+                word: "satisfaction",
+                answer: "Noun",
+                options: ["Noun", "Verb", "Adjective", "Adverb"],
+                difficulty: "Easy",
+                explanation: "The suffix '-action' designates 'satisfaction' as an abstract, uncountable noun, functioning as the direct object of 'get'."
+            },
+            {
+                id: 13,
+                sentence: "The film was boring and she felt highly <span class='target'>disappointed</span>.",
+                word: "disappointed",
+                answer: "Adjective",
+                options: ["Noun", "Verb", "Adjective", "Pronoun"],
+                difficulty: "Medium",
+                explanation: "'Disappointed' functions as a participial adjective (describing her feelings after a linking verb 'felt')."
+            },
+            {
+                id: 14,
+                sentence: "We need to gather more <span class='target'>information</span> before making a final decision.",
+                word: "information",
+                answer: "Noun",
+                options: ["Noun", "Verb", "Adjective", "Conjunction"],
+                difficulty: "Easy",
+                explanation: "'Information' is an uncountable noun. It is the direct object of 'gather'."
+            },
+            {
+                id: 15,
+                sentence: "The dog bit the postman, but fortunately it didn't hurt <span class='target'>him</span> severely.",
+                word: "him",
+                answer: "Pronoun",
+                options: ["Noun", "Pronoun", "Article", "Demonstrative"],
+                difficulty: "Easy",
+                explanation: "'Him' is a personal pronoun in the objective case, standing in place of the noun 'postman'."
+            },
+            {
+                id: 16,
+                sentence: "He <span class='target'>is</span> extremely proud of his academic achievements.",
+                word: "is",
+                answer: "Verb",
+                options: ["Verb", "Preposition", "Conjunction", "Adjective"],
+                difficulty: "Easy",
+                explanation: "'Is' is a state-of-being verb (copula/linking verb) connecting the subject 'He' to the subject complement adjective 'proud'."
+            },
+            {
+                id: 17,
+                sentence: "The train finally arrived <span class='target'>before</span> noon.",
+                word: "before",
+                answer: "Preposition",
+                options: ["Preposition", "Conjunction", "Adverb", "Noun"],
+                difficulty: "Medium",
+                explanation: "'Before' functions as a preposition here because it introduces the noun phrase 'noon' to create a prepositional phrase."
+            },
+            {
+                id: 18,
+                sentence: "We decided to stay indoors <span class='target'>because</span> it was raining heavily.",
+                word: "because",
+                answer: "Conjunction",
+                options: ["Preposition", "Conjunction", "Adverb", "Demonstrative"],
+                difficulty: "Easy",
+                explanation: "'Because' is a subordinating conjunction connecting the independent clause with the dependent reason clause."
+            },
+            {
+                id: 19,
+                sentence: "<span class='target'>This</span> is the most challenging assignment of the school term.",
+                word: "This",
+                answer: "Demonstrative",
+                options: ["Pronoun", "Article", "Demonstrative", "Interjection"],
+                difficulty: "Medium",
+                explanation: "'This' is a demonstrative (functioning as a demonstrative pronoun here) pointing out the specific assignment."
+            },
+            {
+                id: 20,
+                sentence: "An <span class='target'>honest</span> mistake was made during the calculations.",
+                word: "honest",
+                answer: "Adjective",
+                options: ["Noun", "Verb", "Adjective", "Adverb"],
+                difficulty: "Easy",
+                explanation: "'Honest' is an adjective modifying the noun 'mistake'."
+            },
+            {
+                id: 21,
+                sentence: "The principal <span class='target'>himself</span> signed the championship certificate.",
+                word: "himself",
+                answer: "Pronoun",
+                options: ["Pronoun", "Noun", "Adjective", "Adverb"],
+                difficulty: "Hard",
+                explanation: "'Himself' is an intensive/reflexive pronoun used here to add emphasis directly after the noun 'principal'."
+            },
+            {
+                id: 22,
+                sentence: "<span class='target'>Wow</span>, that is a spectacular view of Victoria Harbour!",
+                word: "Wow",
+                answer: "Interjection",
+                options: ["Pronoun", "Conjunction", "Interjection", "Article"],
+                difficulty: "Easy",
+                explanation: "'Wow' is an interjection used to express strong emotion or sudden amazement."
+            },
+            {
+                id: 23,
+                sentence: "The company will provide <span class='target'>adequate</span> safety equipment for its staff.",
+                word: "adequate",
+                answer: "Adjective",
+                options: ["Noun", "Verb", "Adjective", "Adverb"],
+                difficulty: "Medium",
+                explanation: "'Adequate' is an adjective specifying the quality and sufficiency of the 'safety equipment'."
+            },
+            {
+                id: 24,
+                sentence: "She bought <span class='target'>an</span> interesting piece of antique furniture.",
+                word: "an",
+                answer: "Article",
+                options: ["Article", "Pronoun", "Preposition", "Demonstrative"],
+                difficulty: "Easy",
+                explanation: "'An' is an indefinite article used before a word starting with a vowel sound ('interesting')."
+            },
+            {
+                id: 25,
+                sentence: "<span class='target'>Those</span> books on the top shelf belong to the teacher.",
+                word: "Those",
+                answer: "Demonstrative",
+                options: ["Article", "Demonstrative", "Pronoun", "Preposition"],
+                difficulty: "Medium",
+                explanation: "'Those' acts as a demonstrative adjective modifying the plural noun 'books' by pointing them out."
+            }
+        ];
+
+        // App States
+        let currentMode = 'classic'; // 'classic' | 'survival' | 'time'
+        let selectedQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let lives = 3;
+        let timer = 60;
+        let timerInterval = null;
+        let streak = 0;
+        let bestStreak = 0;
+        let bookmarks = [];
+        let startTime = null;
+        let endTime = null;
+        let statsRecord = {
+            classic: 0,
+            survival: 0,
+            time: 0
+        };
+        // Tracker for analytics: { category: { correct: X, total: Y } }
+        let categoryStats = {};
+
+        // Run on startup
+        window.onload = function() {
+            // Load bookmarks and progress from localStorage
+            if (localStorage.getItem('f4_pos_bookmarks')) {
+                bookmarks = JSON.parse(localStorage.getItem('f4_pos_bookmarks'));
+                updateBookmarkBadge();
+            }
+            if (localStorage.getItem('f4_pos_stats')) {
+                statsRecord = JSON.parse(localStorage.getItem('f4_pos_stats'));
+            }
+            renderStatsDashboard();
+            goToLobby();
+        };
+
+        // Screen Routing
+        function goToLobby() {
+            clearInterval(timerInterval);
+            document.getElementById('lobby-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            renderStatsDashboard();
+        }
+
+        function renderStatsDashboard() {
+            const dashboard = document.getElementById('stats-dashboard');
+            const classic = document.getElementById('stat-classic-score');
+            const survival = document.getElementById('stat-survival-score');
+            const time = document.getElementById('stat-time-score');
+
+            if (statsRecord.classic > 0 || statsRecord.survival > 0 || statsRecord.time > 0) {
+                dashboard.classList.remove('hidden');
+                classic.innerText = statsRecord.classic ? `${statsRecord.classic}/15` : '-';
+                survival.innerText = statsRecord.survival ? `${statsRecord.survival}` : '-';
+                time.innerText = statsRecord.time ? `${statsRecord.time}` : '-';
+            } else {
+                dashboard.classList.add('hidden');
+            }
+        }
+
+        // Initialize quiz parameters
+        function startQuiz(mode) {
+            currentMode = mode;
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            bestStreak = 0;
+            lives = 3;
+            timer = 60;
+            startTime = new Date();
+            categoryStats = {};
+
+            // Shuffle and Select Questions
+            let shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+            if (currentMode === 'classic') {
+                selectedQuestions = shuffled.slice(0, 15);
+            } else {
+                // For survival and time, allow continuous recycling if running out
+                selectedQuestions = shuffled;
+            }
+
+            // Set UI headers
+            const modeText = document.getElementById('mode-text');
+            const indicatorIcon = document.getElementById('status-indicator-icon');
+            const livesCont = document.getElementById('lives-container');
+            const timerCont = document.getElementById('timer-container');
+            const streakCont = document.getElementById('streak-container');
+
+            livesCont.classList.add('hidden');
+            timerCont.classList.add('hidden');
+            streakCont.classList.add('hidden');
+
+            if (currentMode === 'classic') {
+                modeText.innerText = "Classic Challenge";
+                indicatorIcon.innerHTML = `<svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+                document.getElementById('quiz-progress-wrapper').classList.remove('hidden');
+            } else if (currentMode === 'survival') {
+                modeText.innerText = "Sudden Death Survival";
+                indicatorIcon.innerHTML = `<svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>`;
+                livesCont.classList.remove('hidden');
+                updateLivesUI();
+                document.getElementById('quiz-progress-wrapper').classList.add('hidden');
+            } else if (currentMode === 'time') {
+                modeText.innerText = "Time Blitz (60s)";
+                indicatorIcon.innerHTML = `<svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+                timerCont.classList.remove('hidden');
+                streakCont.classList.remove('hidden');
+                document.getElementById('timer-countdown').innerText = `${timer}s`;
+                document.getElementById('quiz-progress-wrapper').classList.add('hidden');
+                
+                // Start Timer Loop
+                clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    timer--;
+                    document.getElementById('timer-countdown').innerText = `${timer}s`;
+                    if (timer <= 0) {
+                        endQuizSession();
+                    }
+                }, 1000);
+            }
+
+            document.getElementById('lobby-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            
+            showQuestion();
+        }
+
+        // Show Current Question UI
+        function showQuestion() {
+            // Re-shuffle list if survival or time modes run past database limits
+            if (currentQuestionIndex >= selectedQuestions.length) {
+                let shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+                selectedQuestions = selectedQuestions.concat(shuffled);
+            }
+
+            const q = selectedQuestions[currentQuestionIndex];
+            
+            // Header stats
+            if (currentMode === 'classic') {
+                document.getElementById('question-index').innerText = `Question ${currentQuestionIndex + 1} of 15`;
+                const percent = ((currentQuestionIndex) / 15) * 100;
+                document.getElementById('quiz-progress-bar').style.width = `${percent}%`;
+            } else {
+                document.getElementById('question-index').innerText = `Streak: ${streak} correct`;
+            }
+
+            // Difficulty Setting
+            const diffBadge = document.getElementById('difficulty-badge');
+            diffBadge.innerText = q.difficulty;
+            if (q.difficulty === 'Easy') {
+                diffBadge.className = "absolute top-4 right-6 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-emerald-50 text-emerald-700 border border-emerald-100";
+            } else if (q.difficulty === 'Medium') {
+                diffBadge.className = "absolute top-4 right-6 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-amber-50 text-amber-700 border border-amber-100";
+            } else {
+                diffBadge.className = "absolute top-4 right-6 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-rose-50 text-rose-700 border border-rose-100";
+            }
+
+            // Sentences Context Formatting (Highlight the underlined target word)
+            const sentenceContainer = document.getElementById('sentence-container');
+            // The word in database matches the sentence wrap
+            sentenceContainer.innerHTML = q.sentence;
+
+            // Bookmark SVG status
+            const isBookmarked = bookmarks.some(b => b.id === q.id);
+            const bSvg = document.getElementById('bookmark-svg');
+            if (isBookmarked) {
+                bSvg.setAttribute('fill', 'currentColor');
+                bSvg.setAttribute('class', 'w-5 h-5 text-amber-500');
+            } else {
+                bSvg.setAttribute('fill', 'none');
+                bSvg.setAttribute('class', 'w-5 h-5 text-slate-400 hover:text-amber-500');
+            }
+
+            // Options Grid Generation
+            const choicesGrid = document.getElementById('choices-grid');
+            choicesGrid.innerHTML = '';
+            
+            // Generate standard four-option layouts
+            q.options.forEach((opt, idx) => {
+                const optLetter = String.fromCharCode(65 + idx); // A, B, C, D
+                const button = document.createElement('button');
+                button.className = "w-full text-left bg-slate-50 border border-slate-200 hover:border-brand-500 hover:bg-brand-50/25 p-4 rounded-2xl flex items-center space-x-3 transition-all group font-medium text-slate-700 text-sm md:text-base";
+                button.setAttribute('onclick', `submitAnswer('${opt}', this)`);
+                button.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-500 group-hover:bg-brand-600 group-hover:text-white group-hover:border-brand-600 flex items-center justify-center font-bold text-xs transition-all shadow-sm">${optLetter}</span>
+                    <span class="flex-grow">${opt}</span>
+                `;
+                choicesGrid.appendChild(button);
+            });
+
+            // Hide Feedback Area
+            document.getElementById('feedback-card').classList.add('hidden');
+            document.getElementById('question-card').classList.remove('shake-incorrect');
+        }
+
+        // Check selected answer
+        function submitAnswer(choice, clickedBtn) {
+            const q = selectedQuestions[currentQuestionIndex];
+            const isCorrect = (choice === q.answer);
+            
+            // Record analytics category
+            if (!categoryStats[q.answer]) {
+                categoryStats[q.answer] = { correct: 0, total: 0 };
+            }
+            categoryStats[q.answer].total++;
+
+            // Select all option buttons and disable further clicks
+            const optionButtons = document.querySelectorAll('#choices-grid button');
+            optionButtons.forEach(btn => {
+                btn.removeAttribute('onclick'); // prevent double tap
+                btn.classList.add('opacity-50');
+            });
+
+            // Re-highlight the clicked button
+            clickedBtn.classList.remove('opacity-50');
+
+            const feedbackCard = document.getElementById('feedback-card');
+            const feedbackIconBg = document.getElementById('feedback-icon-bg');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackDesc = document.getElementById('feedback-description');
+
+            if (isCorrect) {
+                // Success Mechanics
+                categoryStats[q.answer].correct++;
+                score++;
+                streak++;
+                if (streak > bestStreak) bestStreak = streak;
+                
+                clickedBtn.className = "w-full text-left bg-emerald-50 border-2 border-emerald-500 p-4 rounded-2xl flex items-center space-x-3 transition-all font-semibold text-emerald-800 text-sm md:text-base pulse-correct";
+                clickedBtn.querySelector('span').className = "w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-xs";
+
+                // Bonus Time in Time Attack
+                if (currentMode === 'time') {
+                    timer += 3;
+                    document.getElementById('timer-countdown').innerText = `${timer}s`;
+                }
+
+                // Show Correct Feedback Panel
+                feedbackCard.className = "bg-emerald-50 border border-emerald-100 rounded-3xl p-6 shadow-premium transition-all duration-300";
+                feedbackIconBg.className = "p-3 rounded-2xl bg-emerald-500 text-white";
+                feedbackIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>`;
+                feedbackTitle.innerText = "Correct! Great grammar skill!";
+                feedbackTitle.className = "text-lg font-extrabold text-emerald-800";
+                feedbackDesc.innerHTML = `<span class="font-semibold text-slate-700">"${q.word}"</span> is indeed a <strong class="text-emerald-700">${q.answer}</strong>. <br><span class="text-xs text-slate-500">${q.explanation}</span>`;
+
+            } else {
+                // Mistake Mechanics
+                streak = 0;
+                clickedBtn.className = "w-full text-left bg-rose-50 border-2 border-rose-500 p-4 rounded-2xl flex items-center space-x-3 transition-all font-semibold text-rose-800 text-sm md:text-base";
+                clickedBtn.querySelector('span').className = "w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center font-bold text-xs";
+                document.getElementById('question-card').classList.add('shake-incorrect');
+
+                // Auto highlight the correct button silently for visual feedback
+                optionButtons.forEach(btn => {
+                    const btnLabel = btn.querySelector('span:last-child').innerText;
+                    if (btnLabel === q.answer) {
+                        btn.className = "w-full text-left bg-emerald-50 border border-emerald-500 p-4 rounded-2xl flex items-center space-x-3 transition-all font-semibold text-emerald-800 text-sm md:text-base opacity-90";
+                        btn.querySelector('span').className = "w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-xs";
+                    }
+                });
+
+                // Deduct Life in Survival
+                if (currentMode === 'survival') {
+                    lives--;
+                    updateLivesUI();
+                    if (lives <= 0) {
+                        setTimeout(() => endQuizSession(), 1200);
+                        return;
+                    }
+                }
+
+                // Penalty Time in Time Attack
+                if (currentMode === 'time') {
+                    timer = Math.max(0, timer - 5);
+                    document.getElementById('timer-countdown').innerText = `${timer}s`;
+                }
+
+                // Show Incorrect Feedback Panel
+                feedbackCard.className = "bg-rose-50 border border-rose-100 rounded-3xl p-6 shadow-premium transition-all duration-300";
+                feedbackIconBg.className = "p-3 rounded-2xl bg-rose-500 text-white";
+                feedbackIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>`;
+                feedbackTitle.innerText = "Oops! That's not quite right.";
+                feedbackTitle.className = "text-lg font-extrabold text-rose-800";
+                feedbackDesc.innerHTML = `<span class="font-semibold text-slate-700">"${q.word}"</span> is not correct. The actual part of speech is <strong class="text-emerald-700">${q.answer}</strong>. <br><span class="text-xs text-slate-500">${q.explanation}</span>`;
+            }
+
+            // Show Feedback Section
+            feedbackCard.classList.remove('hidden');
+            if (currentMode === 'time') {
+                document.getElementById('streak-count').innerText = streak;
+            }
+        }
+
+        // Continue to next question or evaluate finish
+        function handleNextQuestion() {
+            currentQuestionIndex++;
+            if (currentMode === 'classic' && currentQuestionIndex >= 15) {
+                endQuizSession();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function updateLivesUI() {
+            const hearts = document.querySelectorAll('.heart');
+            hearts.forEach((heart, idx) => {
+                if (idx < lives) {
+                    heart.className = "heart text-rose-500 text-xl font-bold opacity-100";
+                } else {
+                    heart.className = "heart text-slate-300 text-xl font-bold opacity-30";
+                }
+            });
+        }
+
+        // Show Results Screen & save scores
+        function endQuizSession() {
+            clearInterval(timerInterval);
+            endTime = new Date();
+            const timeDiffSec = Math.round((endTime - startTime) / 1000);
+            
+            // Format time display
+            const minutes = Math.floor(timeDiffSec / 60);
+            const seconds = timeDiffSec % 60;
+            const timeDisplay = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+
+            // Calculate metrics
+            let totalAnswered = currentMode === 'classic' ? 15 : currentQuestionIndex;
+            if (currentMode === 'survival' || currentMode === 'time') {
+                totalAnswered = currentQuestionIndex;
+            }
+            const accuracy = totalAnswered > 0 ? Math.round((score / totalAnswered) * 100) : 0;
+
+            // Save High Score record
+            if (currentMode === 'classic') {
+                if (score > statsRecord.classic) statsRecord.classic = score;
+            } else if (currentMode === 'survival') {
+                if (score > statsRecord.survival) statsRecord.survival = score;
+            } else if (currentMode === 'time') {
+                if (score > statsRecord.time) statsRecord.time = score;
+            }
+            localStorage.setItem('f4_pos_stats', JSON.stringify(statsRecord));
+
+            // Dynamic results card elements
+            const emblem = document.getElementById('results-emblem');
+            const headline = document.getElementById('results-headline');
+            const subtitle = document.getElementById('results-subtitle');
+
+            if (accuracy >= 85) {
+                emblem.innerText = "🏆";
+                headline.innerText = "Master Level Accomplished!";
+                subtitle.innerText = "Superb! Your understanding of grammatical parts of speech perfectly aligns with academic expectations.";
+            } else if (accuracy >= 60) {
+                emblem.innerText = "🥈";
+                headline.innerText = "Great Job! Keep Practicing!";
+                subtitle.innerText = "Well done! You have a solid grasp on grammar structures, but review some of the tricky items below.";
+            } else {
+                emblem.innerText = "📚";
+                headline.innerText = "Revision Recommended";
+                subtitle.innerText = "Keep going! We recommend spending some time reviewing our built-in Grammar Revision Guide on the top right.";
+            }
+
+            document.getElementById('res-score').innerText = `${score}/${totalAnswered}`;
+            document.getElementById('res-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('res-streak').innerText = bestStreak;
+            document.getElementById('res-time').innerText = timeDisplay;
+
+            // Generate Strength & Weaknesses Breakdown Chart
+            const analyticsContainer = document.getElementById('analytics-bars');
+            analyticsContainer.innerHTML = '';
+
+            const categoriesUsed = Object.keys(categoryStats);
+            if (categoriesUsed.length === 0) {
+                analyticsContainer.innerHTML = `<p class="text-xs text-slate-400 italic">No category data collected for this session.</p>`;
+            } else {
+                categoriesUsed.forEach(cat => {
+                    const catData = categoryStats[cat];
+                    const percent = Math.round((catData.correct / catData.total) * 100);
+                    let barColor = "bg-rose-500";
+                    if (percent >= 80) barColor = "bg-emerald-500";
+                    else if (percent >= 50) barColor = "bg-amber-500";
+
+                    analyticsContainer.innerHTML += `
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-[11px] font-bold text-slate-600">
+                                <span>${cat}</span>
+                                <span>${catData.correct}/${catData.total} (${percent}%)</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div class="${barColor} h-full" style="width: ${percent}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Router navigation
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+        }
+
+        function restartQuizWithSameSettings() {
+            startQuiz(currentMode);
+        }
+
+        // Bookmarks Logic
+        function toggleCurrentBookmark() {
+            const q = selectedQuestions[currentQuestionIndex];
+            const bIndex = bookmarks.findIndex(b => b.id === q.id);
+            const bSvg = document.getElementById('bookmark-svg');
+
+            if (bIndex > -1) {
+                bookmarks.splice(bIndex, 1);
+                bSvg.setAttribute('fill', 'none');
+                bSvg.setAttribute('class', 'w-5 h-5 text-slate-400 hover:text-amber-500');
+            } else {
+                bookmarks.push(q);
+                bSvg.setAttribute('fill', 'currentColor');
+                bSvg.setAttribute('class', 'w-5 h-5 text-amber-500');
+            }
+
+            localStorage.setItem('f4_pos_bookmarks', JSON.stringify(bookmarks));
+            updateBookmarkBadge();
+        }
+
+        function updateBookmarkBadge() {
+            const badge = document.getElementById('bookmark-badge');
+            if (bookmarks.length > 0) {
+                badge.innerText = bookmarks.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function toggleBookmarkedModal() {
+            const modal = document.getElementById('bookmark-modal');
+            if (modal.classList.contains('hidden')) {
+                renderBookmarksList();
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function renderBookmarksList() {
+            const list = document.getElementById('bookmark-list');
+            list.innerHTML = '';
+            
+            if (bookmarks.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-8 text-slate-400">
+                        <span class="text-4xl block mb-2">⭐</span>
+                        <p class="text-sm font-semibold">No bookmarked questions yet.</p>
+                        <p class="text-xs">While reviewing sentences during the quiz, tap the star icon to save tough questions here!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            bookmarks.forEach((q, idx) => {
+                list.innerHTML += `
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 relative space-y-2">
+                        <span class="absolute top-3 right-3 text-emerald-600 bg-emerald-50 border border-emerald-100 text-[10px] font-bold px-2 py-0.5 rounded-full">${q.answer}</span>
+                        <p class="text-xs text-slate-400 font-bold uppercase">Question #${idx + 1}</p>
+                        <p class="text-sm font-semibold text-slate-700 leading-relaxed">${q.sentence}</p>
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-100 text-xs text-slate-500 space-y-1">
+                            <p class="text-[11px] font-semibold text-slate-600 uppercase">Grammar Notes:</p>
+                            <p class="italic">"${q.word}" works as a ${q.answer} because: ${q.explanation}</p>
+                        </div>
+                        <button onclick="removeBookmark(${q.id})" class="text-[10px] text-rose-500 font-bold hover:underline">Remove from study list</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removeBookmark(id) {
+            bookmarks = bookmarks.filter(b => b.id !== id);
+            localStorage.setItem('f4_pos_bookmarks', JSON.stringify(bookmarks));
+            updateBookmarkBadge();
+            renderBookmarksList();
+            
+            // If current question displayed is this bookmark, reset its state icon
+            const currentQ = selectedQuestions[currentQuestionIndex];
+            if (currentQ && currentQ.id === id) {
+                const bSvg = document.getElementById('bookmark-svg');
+                bSvg.setAttribute('fill', 'none');
+                bSvg.setAttribute('class', 'w-5 h-5 text-slate-400 hover:text-amber-500');
+            }
+        }
+
+        function clearAllBookmarks() {
+            bookmarks = [];
+            localStorage.removeItem('f4_pos_bookmarks');
+            updateBookmarkBadge();
+            renderBookmarksList();
+        }
+
+        function clearSaves() {
+            statsRecord = { classic: 0, survival: 0, time: 0 };
+            localStorage.removeItem('f4_pos_stats');
+            renderStatsDashboard();
+        }
+
+        // Revision Guide Panel Mechanics
+        function toggleStudyGuide() {
+            const drawer = document.getElementById('study-guide-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            if (drawer.classList.contains('translate-x-full')) {
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function searchStudyGuide() {
+            const query = document.getElementById('guide-search').value.toLowerCase();
+            const items = document.querySelectorAll('.guide-item');
+
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

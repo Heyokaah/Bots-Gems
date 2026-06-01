@@ -38,14 +38,15 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
-        /* Highlight styling for the dynamic question target words */
+        /* Highlight styling for the dynamic question target words with strict overrides */
         .target {
-            text-decoration: underline;
-            text-decoration-color: #8b5cf6; /* brand-500 */
-            text-decoration-thickness: 4px;
-            text-underline-offset: 8px;
-            color: #6d28d9; /* brand-700 */
-            font-weight: 800; /* font-extrabold */
+            display: inline-block !important;
+            text-decoration: underline !important;
+            text-decoration-color: #8b5cf6 !important; /* brand-500 */
+            text-decoration-thickness: 4px !important;
+            text-underline-offset: 8px !important;
+            color: #6d28d9 !important; /* brand-700 */
+            font-weight: 800 !important; /* font-extrabold */
         }
 
         .pulse-correct {
@@ -240,8 +241,8 @@
                 <!-- Target Sentence with Underlined word -->
                 <div class="space-y-6 pt-4">
                     <p class="text-xs text-slate-400 font-bold tracking-wide uppercase">Sentence Context</p>
-                    <div class="text-xl md:text-2xl font-bold text-slate-800 leading-relaxed text-center py-6 px-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200" id="sentence-container">
-                        The boy <u class="underline decoration-brand-500 decoration-4 underline-offset-8 text-brand-700 font-extrabold select-none">runs</u> happily.
+                    <div class="text-xl md:text-2xl font-bold text-slate-800 leading-relaxed text-center py-6 px-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 animate-fade-in" id="sentence-container">
+                        The boy <span class="target">runs</span> happily.
                     </div>
                     
                     <h3 class="text-base font-semibold text-slate-700 text-center">

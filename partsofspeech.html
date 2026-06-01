@@ -38,6 +38,16 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
+        /* Highlight styling for the dynamic question target words */
+        .target {
+            text-decoration: underline;
+            text-decoration-color: #8b5cf6; /* brand-500 */
+            text-decoration-thickness: 4px;
+            text-underline-offset: 8px;
+            color: #6d28d9; /* brand-700 */
+            font-weight: 800; /* font-extrabold */
+        }
+
         .pulse-correct {
             animation: pulse-green 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
@@ -737,7 +747,7 @@
                 answer: "Adjective",
                 options: ["Noun", "Verb", "Adjective", "Adverb"],
                 difficulty: "Medium",
-                explanation: "'Adequate' is an adjective specifying the quality and sufficiency of the 'safety equipment'."
+                explanation: "'Adequately' is an adjective specifying the quality and sufficiency of the 'safety equipment'."
             },
             {
                 id: 24,
@@ -1251,6 +1261,7 @@
             }
         }
 
+        // Action controls
         function clearAllBookmarks() {
             bookmarks = [];
             localStorage.removeItem('f4_pos_bookmarks');

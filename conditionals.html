@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conditional Sentences Training - S3 / Year 9</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .heading-font {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-indigo-600 text-white shadow-md py-4 px-6 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-indigo-500 rounded-lg text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="02 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold heading-font tracking-wide">Conditional Sentences Trainer</h1>
+          <p class="text-xs text-indigo-200">Secondary 3 (Year 9) Grammar Booster</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="toggle-cheat-sheet" class="bg-indigo-700 hover:bg-indigo-800 text-white text-sm px-4 py-2 rounded-lg font-medium transition flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Quick Reference Sheet
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Grid -->
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Left Panel: Interactive Quiz Area (8 cols) -->
+    <section class="lg:col-span-8 flex flex-col gap-6" id="quiz-workspace">
+      
+      <!-- Progress Bar & Stats -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider" id="question-index-label">Question 1 of 10</span>
+          <span class="text-sm font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full" id="score-label">Score: 0 / 0</span>
+        </div>
+        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+          <div id="progress-bar-fill" class="bg-indigo-600 h-full rounded-full transition-all duration-300" style="width: 10%"></div>
+        </div>
+      </div>
+
+      <!-- Immersive Quiz Card -->
+      <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100 flex-grow flex flex-col justify-between min-h-[400px]">
+        
+        <!-- Question Content -->
+        <div id="question-card" class="space-y-6">
+          <div class="flex items-center gap-2">
+            <span id="type-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-100 text-orange-800">
+              Type Dynamic
+            </span>
+            <span id="hint-trigger" class="text-xs text-indigo-500 hover:text-indigo-600 cursor-pointer flex items-center gap-1 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364.364l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              Need a hint?
+            </span>
+          </div>
+
+          <!-- Hint Text (Hidden by default) -->
+          <div id="hint-box" class="hidden bg-amber-50 border border-amber-200 text-amber-800 text-sm p-3.5 rounded-xl transition duration-200">
+            <strong>Hint:</strong> <span id="hint-text">...</span>
+          </div>
+
+          <!-- The Sentence Interactive Block -->
+          <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6 md:p-8">
+            <p id="sentence-prompt-text" class="text-sm text-slate-400 mb-3 font-semibold uppercase tracking-wider">Fill in the missing verb form(s):</p>
+            <div id="sentence-container" class="text-lg md:text-xl font-medium leading-relaxed text-slate-800 flex flex-wrap gap-x-2 gap-y-4 items-center">
+              <!-- Dynamically populated sentence with inputs -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Answers Selector UI (Active State) -->
+        <div id="answers-container" class="mt-8 space-y-4">
+          <!-- Dynamically populated multiple choice or dropdown confirmers -->
+        </div>
+
+        <!-- Rich Interactive Feedback Box -->
+        <div id="feedback-panel" class="hidden mt-6 p-5 rounded-xl border transition-all duration-300">
+          <div class="flex items-start gap-3">
+            <div id="feedback-icon-container" class="p-2 rounded-lg mt-0.5">
+              <!-- Dynamic SVG icon -->
+            </div>
+            <div class="flex-grow space-y-2">
+              <h4 id="feedback-title" class="font-bold text-base">Feedback</h4>
+              <p id="feedback-desc" class="text-sm text-slate-600"></p>
+              <div id="explanation-box" class="bg-white/80 p-3.5 rounded-lg border text-xs text-slate-700 space-y-2">
+                <!-- Structure details -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control Actions -->
+        <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
+          <button id="reset-btn" class="text-sm text-slate-400 hover:text-slate-600 font-medium transition">
+            Restart Quiz
+          </button>
+          <button id="action-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 shadow-sm flex items-center gap-2">
+            <span>Check Answer</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Right Panel: S3 Revision Guide / Cheat Sheet (4 cols) -->
+    <aside class="lg:col-span-4 flex flex-col gap-6 transition-all duration-300" id="cheat-sheet-panel">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-indigo-100 sticky top-24">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+          <h3 class="text-lg font-bold text-indigo-900 heading-font flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            Revision Guide
+          </h3>
+          <button id="close-cheat-sheet" class="lg:hidden text-slate-400 hover:text-slate-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Scrollable Reference Blocks -->
+        <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+          
+          <!-- Type 0 -->
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-bold text-slate-700 uppercase">Type 0 (General Truths)</span>
+              <span class="text-[10px] bg-slate-200 text-slate-800 px-1.5 py-0.5 rounded">Always True</span>
+            </div>
+            <div class="text-xs text-slate-500 font-mono space-y-1">
+              <p><strong class="text-indigo-600">If:</strong> Simple Present</p>
+              <p><strong class="text-indigo-600">Main:</strong> Simple Present</p>
+            </div>
+            <p class="text-[11px] italic text-slate-600 mt-2 bg-white p-1.5 rounded border border-slate-100">"If you heat ice, it melts."</p>
+          </div>
+
+          <!-- Type 1 -->
+          <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-bold text-emerald-800 uppercase">Type 1 (Real Possible)</span>
+              <span class="text-[10px] bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded">Likely Future</span>
+            </div>
+            <div class="text-xs text-slate-500 font-mono space-y-1">
+              <p><strong class="text-emerald-700">If:</strong> Simple Present</p>
+              <p><strong class="text-emerald-700">Main:</strong> Will + Bare Infinitive</p>
+            </div>
+            <p class="text-[11px] italic text-slate-600 mt-2 bg-white p-1.5 rounded border border-slate-100">"If it rains tomorrow, we will stay home."</p>
+          </div>
+
+          <!-- Type 2 -->
+          <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-bold text-amber-800 uppercase">Type 2 (Imaginary Present)</span>
+              <span class="text-[10px] bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded">Unreal Now</span>
+            </div>
+            <div class="text-xs text-slate-500 font-mono space-y-1">
+              <p><strong class="text-amber-700">If:</strong> Simple Past <span class="text-[10px] text-orange-600 font-sans">(were)</span></p>
+              <p><strong class="text-amber-700">Main:</strong> Would + Bare Infinitive</p>
+            </div>
+            <p class="text-[11px] italic text-slate-600 mt-2 bg-white p-1.5 rounded border border-slate-100">"If I were you, I would study harder."</p>
+          </div>
+
+          <!-- Type 3 -->
+          <div class="p-3 bg-rose-50 rounded-xl border border-rose-200">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-bold text-rose-800 uppercase">Type 3 (Imaginary Past)</span>
+              <span class="text-[10px] bg-rose-200 text-rose-800 px-1.5 py-0.5 rounded">Regret / Past unreal</span>
+            </div>
+            <div class="text-xs text-slate-500 font-mono space-y-1">
+              <p><strong class="text-rose-700">If:</strong> Past Perfect (had + p.p.)</p>
+              <p><strong class="text-rose-700">Main:</strong> Would have + Past Participle</p>
+            </div>
+            <p class="text-[11px] italic text-slate-600 mt-2 bg-white p-1.5 rounded border border-slate-100">"If you had studied, you would have passed."</p>
+          </div>
+
+          <!-- Unless and Modals -->
+          <div class="p-3 bg-violet-50 rounded-xl border border-violet-200">
+            <span class="text-xs font-bold text-violet-800 uppercase block mb-1">Advanced S3 Notes</span>
+            <div class="text-[11px] text-slate-600 space-y-2">
+              <p><strong>Unless</strong> = If ... not<br><span class="italic text-slate-500">"Unless you run, you'll be late." = "If you don't run..."</span></p>
+              <p><strong>Modals:</strong> replace 'will' with <em>might</em> (possibility), <em>can</em> (ability/permission), or <em>should</em> (advice).</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Complete View State: Results Summary -->
+  <div id="results-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-xl border border-slate-100 text-center space-y-6">
+      <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-3xl">
+        🎉
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold heading-font text-slate-900">Training Completed!</h2>
+        <p class="text-slate-500 mt-2">Excellent workout with S3 Conditional structures!</p>
+      </div>
+      
+      <!-- Metrics Container -->
+      <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+        <div>
+          <span class="text-xs text-slate-400 font-semibold block uppercase">Total Score</span>
+          <span id="modal-score" class="text-2xl font-bold text-indigo-600">0%</span>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 font-semibold block uppercase">Accuracy</span>
+          <span id="modal-accuracy" class="text-2xl font-bold text-slate-700">0/10 Correct</span>
+        </div>
+      </div>
+
+      <!-- Encouragement Message -->
+      <div id="modal-feedback-msg" class="text-sm text-slate-600 italic px-4">
+        "You've shown a strong grasp of past imaginary actions! Keep reviewing Type 3 structures."
+      </div>
+
+      <div class="flex gap-4">
+        <button id="close-modal-btn" class="flex-grow bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-6 rounded-xl transition duration-150">
+          Close Review
+        </button>
+        <button id="restart-modal-btn" class="flex-grow bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-150">
+          Retry Trainer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-slate-100 border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto">
+      &copy; 2026 Secondary Three English Grammar Enhancement Program • Interactive Immersion Block
+    </div>
+  </footer>
+
+  <script>
+    // Embedded JSON Array containing sample sentences and structures
+    const quizData = [
+      {
+        id: 1,
+        type: "Type 0",
+        typeNum: 0,
+        hint: "This represents a scientific fact or general truth. Both clauses should use Simple Present.",
+        sentence: [
+          { text: "If you ", isGap: false },
+          { isGap: true, clause: "if", baseVerb: "pour", correctValue: "pour" },
+          { text: " oil on water, it ", isGap: false },
+          { isGap: true, clause: "main", baseVerb: "float", correctValue: "floats" },
+          { text: ".", isGap: false }
+        ],
+        explanation: "Type 0 structure requires 'Simple Present' in both the If-clause and the Main-clause because the scientific law of buoyancy guarantees it always happens."
+      },
+      {
+        id: 2,
+        type: "Type 1",
+        typeNum: 1,
+        hint: "This refers to a real future possibility. If-clause uses Simple Present; Main-clause uses simple future.",
+        sentence: [
+          { text: "If tomorrow ", isGap: false },
+          { isGap: true, clause: "if", baseVerb: "be", correctValue: "is" },
+          { text: " a fine day, we ", isGap: false },
+          { isGap: true, clause: "main", baseVerb: "go", correctValue: "will go" },
+          { text: " on a picnic.", isGap: false }
+        ],
+        explanation: "Type 1 conditionals are used to model real future possibilities: If-clause (Simple Present: 'is') + Main-clause (Simple Future: 'will go')."
+      },
+      {
+        id: 3,
+        type: "Type 2",
+        typeNum: 2,
+        hint: "This refers to an imaginary or unlikely situation in the present. Use Simple Past in If-clause (remember 'were' is preferred for all subjects) and 'would + verb' in Main-clause.",
+        sentence: [
+          { text: "If I ", isGap: false },
+          { isGap: true, clause: "if", baseVerb: "be", correctValue: "were" },
+          { text: " you, I ", isGap: false },
+          { isGap: true, clause: "main", baseVerb: "not do", correctValue: "would not do" },
+          { text: " silly things.", isGap: false }
+        ],
+        explanation: "Type 2 structure tests imaginary present/advice. It requires Simple Past subjunctive 'were' in the If-clause and 'would + bare infinitive' ('would not do') in the Main-clause."
+      },
+      {
+        id: 4,
+        type: "Type 3",
+        typeNum: 3,
+        hint: "An unreal past condition that didn't happen. Use Past Perfect in the If-clause, and 'would have + past participle' in the Main-clause.",
+        sentence: [
+          { text: "We ", isGap: false },
+          { isGap: true, clause: "main", baseVerb: "be", correctValue: "would have been" },
+          { text: " on time if we ", isGap: false },
+          { isGap: true, clause: "if", baseVerb: "not miss", correctValue: "had not missed" },
+          { text: " the bus.", isGap: false }
+        ],
+        explanation: "Type 3 refers to imaginary past regrets. If-clause needs Past Perfect ('had not missed') and Main-clause needs 'would have + past participle' ('would have been')."
+      },
+      {
+        id: 5,
+        type: "Unless (Type 1)",
+        typeNum: 1,
+        hint: "Remember 'unless' means 'if ... not'. Apply Type 1 rules here.",
+        sentence: [
+          { text: "Unless we ", isGap: false },
+          { isGap: true, clause: "if", baseVerb: "donate", correctValue: "donate" },
+          { text: " blankets to the homeless, they ", isGap: false },
+          { isGap: true, clause: "main", baseVerb: "feel", correctValue: "will feel" },
+          { text: " cold sleeping outside.", isGap: false }
+        ],
+        explanation: "'Unless we donate...' functions as an active negative conditional ('If we do not donate...'). Since this describes a real future threat, it follows the Type 1 pattern."
+      },
+      {
+        id: 6,
+        type: "Type 0",
+        typeNum: 0,
+        hint: "General truth / fact. Both actions are scientific realities.",
+        sentence: [
+          { text: "If flowers ", isGap: false },
+          { isGap: true, clause: "if", baseVerb: "not get", correctValue: "don't get" },
+          { text: " water, they ", isGap: false },
+          { isGap: true, clause: "main", baseVerb: "die", correctValue: "die" },
+          { text: ".", isGap: false }
+        ],
+        explanation: "Since plants dying without water is a universal fact, we must use Type 0: simple present negative 'don't get' inside the If-clause, and simple present 'die' inside the Main-clause."
+      },
+      {
+        id: 7,
+        type: "Type 3",
+        typeNum: 3,
+        hint: "This refers to a tragic past event that already occurred. Use Past Perfect and would/could/might have + p.p.",
+        sentence: [
+          { text: "The tragedy ", isGap: false },
+          { isGap: true, clause: "main", baseVerb: "not happen", correctValue: "would not have happened" },
+          { text: " if she ", isGap: false },
+          { isGap: true, clause: "if", baseVerb: "not leave", correctValue: "had not left" },
+          { text: " the baby alone.", isGap: false }
+        ],
+        explanation: "This tests a past unreal regret (Type 3). The main clause contains the negative hypothetical result 'would not have happened', matched with the past perfect negative 'had not left'."
+      },
+      {
+        id: 8,
+        type: "Type 1 (Modals)",
+        typeNum: 1,
+        hint: "Use advice modals instead of 'will' to make a recommendation in Type 1.",
+        sentence: [
+          { text: "If you go out today, you ", isGap: false },
+          { isGap: true, clause: "main", baseVerb: "should bring", correctValue: "should bring" },
+          { text: " an umbrella as it looks dark.", isGap: false }
+        ],
+        explanation: "For S3 Year 9, we introduce other modal verbs in place of 'will'. Here, 'should' is used in the main clause to deliver advice under a real possible condition."
+      },
+      {
+        id: 9,
+        type: "Type 2",
+        typeNum: 2,
+        hint: "The parents live far away (unreal present fact). Use past tense in If-clause and 'would + verb' in Main-clause.",
+        sentence: [
+          { text: "If my parents ", isGap: false },
+          { isGap: true, clause: "if", baseVerb: "live", correctValue: "lived" },
+          { text: " nearer, I ", isGap: false },
+          { isGap: true, clause: "main", baseVerb: "see", correctValue: "would see" },
+          { text: " them more often.", isGap: false }
+        ],
+        explanation: "They live far away, so seeing them more is unreal now (Type 2). It requires Simple Past 'lived' and hypothetical 'would see'."
+      },
+      {
+        id: 10,
+        type: "Type 3",
+        typeNum: 3,
+        hint: "A past action that cannot be changed (I didn't study, so I failed). Use had + p.p. in the If-clause.",
+        sentence: [
+          { text: "If I ", isGap: false },
+          { isGap: true, clause: "if", baseVerb: "work", correctValue: "had worked" },
+          { text: " harder, I ", isGap: false },
+          { isGap: true, clause: "main", baseVerb: "pass", correctValue: "would have passed" },
+          { text: " my biology exam.", isGap: false }
+        ],
+        explanation: "This is a typical past regret. We express what could have been with If + Past Perfect ('had worked') and Main + would have passed."
+      }
+    ];
+
+    // State Variables
+    let currentIdx = 0;
+    let score = 0;
+    let attempted = 0;
+    let hasAnsweredCurrent = false;
+
+    // Verb choices generated dynamically to keep distractor choices challenging
+    const verbOptionsPool = {
+      "pour": ["pour", "poured", "will pour", "pours"],
+      "float": ["floats", "float", "would float", "will float"],
+      "be": ["is", "were", "had been", "would be", "was"],
+      "go": ["will go", "go", "would go", "would have gone"],
+      "not do": ["would not do", "will not do", "did not do", "would not have done"],
+      "not miss": ["had not missed", "didn't miss", "doesn't miss", "would not miss"],
+      "donate": ["donate", "donated", "will donate", "donates"],
+      "feel": ["will feel", "feel", "would feel", "would have felt"],
+      "not get": ["don't get", "doesn't get", "didn't get", "had not gotten"],
+      "die": ["die", "dies", "will die", "would die"],
+      "not happen": ["would not have happened", "will not happen", "would not happen", "didn't happen"],
+      "not leave": ["had not left", "didn't leave", "doesn't leave", "would not leave"],
+      "should bring": ["should bring", "shall bring", "brought", "should have brought"],
+      "live": ["lived", "lives", "had lived", "would live"],
+      "see": ["would see", "will see", "saw", "would have seen"],
+      "work": ["had worked", "worked", "works", "would work"],
+      "pass": ["would have passed", "will pass", "would pass", "passed"]
+    };
+
+    // Elements
+    const sentenceContainer = document.getElementById("sentence-container");
+    const typeBadge = document.getElementById("type-badge");
+    const hintTrigger = document.getElementById("hint-trigger");
+    const hintBox = document.getElementById("hint-box");
+    const hintText = document.getElementById("hint-text");
+    const actionBtn = document.getElementById("action-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const feedbackPanel = document.getElementById("feedback-panel");
+    const feedbackTitle = document.getElementById("feedback-title");
+    const feedbackDesc = document.getElementById("feedback-desc");
+    const explanationBox = document.getElementById("explanation-box");
+    const feedbackIconContainer = document.getElementById("feedback-icon-container");
+    const qIndexLabel = document.getElementById("question-index-label");
+    const scoreLabel = document.getElementById("score-label");
+    const progressFill = document.getElementById("progress-bar-fill");
+    
+    // Cheat Sheet Drawer Elements
+    const toggleCheatSheetBtn = document.getElementById("toggle-cheat-sheet");
+    const closeCheatSheetBtn = document.getElementById("close-cheat-sheet");
+    const cheatSheetPanel = document.getElementById("cheat-sheet-panel");
+
+    // Modal Results
+    const resultsModal = document.getElementById("results-modal");
+    const modalScore = document.getElementById("modal-score");
+    const modalAccuracy = document.getElementById("modal-accuracy");
+    const modalFeedbackMsg = document.getElementById("modal-feedback-msg");
+    const closeModalBtn = document.getElementById("close-modal-btn");
+    const restartModalBtn = document.getElementById("restart-modal-btn");
+
+    // Initialize App
+    document.addEventListener("DOMContentLoaded", () => {
+      loadQuestion(currentIdx);
+      setupEventListeners();
+    });
+
+    function setupEventListeners() {
+      // Action Button (Check / Next)
+      actionBtn.addEventListener("click", () => {
+        if (!hasAnsweredCurrent) {
+          checkAnswer();
+        } else {
+          nextQuestion();
+        }
+      });
+
+      // Restart Button
+      resetBtn.addEventListener("click", restartQuiz);
+      restartModalBtn.addEventListener("click", () => {
+        resultsModal.classList.add("hidden");
+        restartQuiz();
+      });
+      closeModalBtn.addEventListener("click", () => {
+        resultsModal.classList.add("hidden");
+      });
+
+      // Toggle Hint
+      hintTrigger.addEventListener("click", () => {
+        hintBox.classList.toggle("hidden");
+      });
+
+      // Sidebar Reference Toggles
+      toggleCheatSheetBtn.addEventListener("click", () => {
+        cheatSheetPanel.classList.toggle("hidden");
+      });
+      closeCheatSheetBtn.addEventListener("click", () => {
+        cheatSheetPanel.classList.add("hidden");
+      });
+    }
+
+    function loadQuestion(index) {
+      hasAnsweredCurrent = false;
+      const data = quizData[index];
+      
+      // Update Index & Score displays
+      qIndexLabel.innerText = `Question ${index + 1} of ${quizData.length}`;
+      scoreLabel.innerText = `Score: ${score} / ${attempted}`;
+      progressFill.style.width = `${((index + 1) / quizData.length) * 100}%`;
+
+      // Badge config
+      typeBadge.innerText = data.type;
+      if (data.typeNum === 0) {
+        typeBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-800";
+      } else if (data.typeNum === 1) {
+        typeBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800";
+      } else if (data.typeNum === 2) {
+        typeBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800";
+      } else if (data.typeNum === 3) {
+        typeBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-100 text-rose-800";
+      }
+
+      // Load Hint
+      hintText.innerText = data.hint;
+      hintBox.classList.add("hidden");
+
+      // Reset Feedback Panel
+      feedbackPanel.classList.add("hidden");
+
+      // Generate Sentence HTML with Inline Dropdowns
+      sentenceContainer.innerHTML = "";
+      let selectIdCounter = 0;
+
+      data.sentence.forEach(part => {
+        if (!part.isGap) {
+          const span = document.createElement("span");
+          span.innerText = part.text;
+          span.className = "py-2";
+          sentenceContainer.appendChild(span);
+        } else {
+          // It's an interactive select gap
+          const selectWrapper = document.createElement("div");
+          selectWrapper.className = "relative inline-block my-1";
+
+          const select = document.createElement("select");
+          select.id = `gap-${selectIdCounter++}`;
+          select.className = "bg-white border border-indigo-300 text-indigo-900 rounded-lg py-1.5 px-3 pr-8 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none cursor-pointer transition shadow-sm hover:border-indigo-500";
+          
+          // Placeholder
+          const placeholderOpt = document.createElement("option");
+          placeholderOpt.value = "";
+          placeholderOpt.innerText = `(${part.baseVerb})`;
+          placeholderOpt.disabled = true;
+          placeholderOpt.selected = true;
+          select.appendChild(placeholderOpt);
+
+          // Get options and shuffle them slightly
+          const options = [...(verbOptionsPool[part.baseVerb] || [part.correctValue])];
+          // Ensure correct value is in the options
+          if (!options.includes(part.correctValue)) {
+            options.push(part.correctValue);
+          }
+          // Simple deterministic shuffle
+          options.sort(() => 0.5 - Math.random());
+
+          options.forEach(opt => {
+            const o = document.createElement("option");
+            o.value = opt;
+            o.innerText = opt;
+            select.appendChild(o);
+          });
+
+          selectWrapper.appendChild(select);
+
+          // Downward arrow decoration
+          const arrow = document.createElement("div");
+          arrow.className = "pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-indigo-500";
+          arrow.innerHTML = `<svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>`;
+          selectWrapper.appendChild(arrow);
+
+          // Keep track of metadata on the select
+          select.dataset.correct = part.correctValue;
+          select.dataset.base = part.baseVerb;
+          select.dataset.clause = part.clause;
+
+          sentenceContainer.appendChild(selectWrapper);
+        }
+      });
+
+      // Update Action Button Text
+      actionBtn.innerHTML = `
+        <span>Check Answer</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      `;
+    }
+
+    function checkAnswer() {
+      const selects = sentenceContainer.querySelectorAll("select");
+      let allSelected = true;
+      let allCorrect = true;
+      const results = [];
+
+      // Validate that the user filled everything
+      selects.forEach(select => {
+        if (!select.value) {
+          allSelected = false;
+          select.classList.add("border-red-500", "animate-bounce");
+          setTimeout(() => {
+            select.classList.remove("animate-bounce");
+          }, 1000);
+        } else {
+          select.classList.remove("border-red-500");
+        }
+      });
+
+      if (!allSelected) {
+        alert("Please pick an option for both verbs first!");
+        return;
+      }
+
+      hasAnsweredCurrent = true;
+      attempted++;
+
+      selects.forEach(select => {
+        const userVal = select.value;
+        const correctVal = select.dataset.correct;
+        const isCorrect = userVal === correctVal;
+
+        results.push({
+          userVal,
+          correctVal,
+          isCorrect,
+          clause: select.dataset.clause,
+          base: select.dataset.base
+        });
+
+        if (!isCorrect) {
+          allCorrect = false;
+          // Color coding bad select
+          select.className = "bg-red-50 border border-red-500 text-red-900 rounded-lg py-1.5 px-3 pr-8 font-bold text-sm focus:outline-none appearance-none cursor-not-allowed transition shadow-sm";
+        } else {
+          // Color coding good select
+          select.className = "bg-green-50 border border-green-500 text-green-900 rounded-lg py-1.5 px-3 pr-8 font-bold text-sm focus:outline-none appearance-none cursor-not-allowed transition shadow-sm";
+        }
+        select.disabled = true;
+      });
+
+      if (allCorrect) {
+        score++;
+        showFeedback(true, results);
+      } else {
+        showFeedback(false, results);
+      }
+
+      // Update score label immediately
+      scoreLabel.innerText = `Score: ${score} / ${attempted}`;
+
+      // Set state to completed action
+      if (currentIdx === quizData.length - 1) {
+        actionBtn.innerHTML = `
+          <span>Finish & See Results</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        `;
+      } else {
+        actionBtn.innerHTML = `
+          <span>Next Challenge</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7m0 0l-7 7M5 5l7 7-7 7" />
+          </svg>
+        `;
+      }
+    }
+
+    function showFeedback(isCorrect, results) {
+      const data = quizData[currentIdx];
+      feedbackPanel.classList.remove("hidden");
+
+      if (isCorrect) {
+        feedbackPanel.className = "mt-6 p-5 rounded-xl border border-green-200 bg-green-50 transition-all duration-300";
+        feedbackTitle.innerText = "Excellent Work! 🌟";
+        feedbackTitle.className = "font-bold text-green-800 text-base";
+        feedbackDesc.innerText = "All verb constructions are 100% correct and mathematically fit the logic rules of the conditional.";
+        
+        feedbackIconContainer.className = "p-2 rounded-lg mt-0.5 bg-green-100 text-green-600";
+        feedbackIconContainer.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        `;
+      } else {
+        feedbackPanel.className = "mt-6 p-5 rounded-xl border border-red-200 bg-red-50 transition-all duration-300";
+        feedbackTitle.innerText = "Let's Correct That Mistake!";
+        feedbackTitle.className = "font-bold text-red-800 text-base";
+        
+        let correctionsText = "";
+        results.forEach(res => {
+          if (!res.isCorrect) {
+            correctionsText += `• For the <strong>${res.clause}-clause</strong> (${res.base}), you picked <em>"${res.userVal || 'nothing'}"</em>. The correct S3 structure is <strong class="text-emerald-700">"${res.correctVal}"</strong>.<br>`;
+          }
+        });
+
+        feedbackDesc.innerHTML = `<span class="block mb-2 font-semibold text-slate-700">Here is how to solve it:</span> ${correctionsText}`;
+        
+        feedbackIconContainer.className = "p-2 rounded-lg mt-0.5 bg-red-100 text-red-600";
+        feedbackIconContainer.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        `;
+      }
+
+      // Add architectural rule breakdown
+      explanationBox.innerHTML = `
+        <div class="border-b border-slate-200/60 pb-1 mb-1 font-semibold text-slate-800">Rule Mechanics (${data.type})</div>
+        <p class="text-[11px] text-slate-600">${data.explanation}</p>
+        <div class="mt-2 text-[10px] text-indigo-600 bg-indigo-50/50 p-1.5 rounded border border-indigo-100/50">
+          <strong>Need to double-check?</strong> See the Quick Reference Sheet on the right side for construction formulas!
+        </div>
+      `;
+    }
+
+    function nextQuestion() {
+      if (currentIdx < quizData.length - 1) {
+        currentIdx++;
+        loadQuestion(currentIdx);
+      } else {
+        showResultsSummary();
+      }
+    }
+
+    function showResultsSummary() {
+      resultsModal.classList.remove("hidden");
+      const percentage = Math.round((score / quizData.length) * 100);
+      modalScore.innerText = `${percentage}%`;
+      modalAccuracy.innerText = `${score} / ${quizData.length} Correct`;
+
+      let summaryMessage = "";
+      if (percentage === 100) {
+        summaryMessage = "Absolute Masterclass! You completed every grammar transformation flawlessly. S3 English Exams will be a breeze for you! 🏆";
+      } else if (percentage >= 80) {
+        summaryMessage = "Fantastic job! S3 Conditionals are highly intuitive to you. Just make sure to double-check irregular past participles for Type 3 scenarios! ✨";
+      } else if (percentage >= 50) {
+        summaryMessage = "Good attempt! S3 level introduces complex mixed rules and Type 3. Keep using our Quick Reference sheet on the right to master past-unreal structures! 📚";
+      } else {
+        summaryMessage = "Don't worry, conditionals take practice! Study the Construction structures in the reference pane and hit the 'Retry' button to clear this up! 💪";
+      }
+      modalFeedbackMsg.innerText = summaryMessage;
+    }
+
+    function restartQuiz() {
+      currentIdx = 0;
+      score = 0;
+      attempted = 0;
+      loadQuestion(currentIdx);
+    }
+  </script>
+</body>
+</html>

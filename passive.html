@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passive Voice Mastery Quiz</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .correct-pulse {
+            animation: correct-pulse 0.4s ease-out;
+        }
+        .wrong-shake {
+            animation: wrong-shake 0.4s ease-in-out;
+        }
+        @keyframes correct-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        @keyframes wrong-shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-600 text-white p-2 rounded-xl shadow-md shadow-brand-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900">Passive Voice Mastery</h1>
+                    <p class="text-xs text-slate-500 font-medium">Secondary 3 (Year 9) Core Grammar Module</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleCheatSheet()" class="px-3 py-1.5 text-xs font-semibold text-brand-600 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    Grammar Formulas
+                </button>
+                <div id="session-timer" class="hidden text-sm font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg font-mono">
+                    00:00
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8 flex flex-col justify-center">
+        
+        <!-- INTRO SCREEN -->
+        <section id="screen-intro" class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+            <div class="max-w-2xl mx-auto text-center">
+                <span class="inline-block px-3 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-full mb-3">Active to Passive Voice</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-4">Are you ready to transform your sentences?</h2>
+                <p class="text-slate-600 mb-8 leading-relaxed">
+                    Welcome to the diagnostic conversion test. Master how grammatical objects step into the spotlight, auxiliary "to be" tenses adapt, and actors recede gracefully behind agency markers.
+                </p>
+
+                <!-- Options Customizer -->
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 text-left mb-8">
+                    <h3 class="font-bold text-slate-800 mb-3 text-sm tracking-wide uppercase">Configure Your Challenge</h3>
+                    
+                    <!-- Mode Pick -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <label class="relative flex p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-brand-500 transition-all shadow-sm">
+                            <input type="radio" name="quiz-mode" value="practice" checked class="sr-only peer">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-slate-900 peer-checked:text-brand-600">Practice Mode</span>
+                                <span class="text-xs text-slate-500 mt-1">Get immediate feedback & detailed formula breakdown after every single choice.</span>
+                            </div>
+                            <span class="absolute right-4 top-4 w-4 h-4 rounded-full border border-slate-300 peer-checked:border-brand-600 peer-checked:bg-brand-600 flex items-center justify-center after:content-[''] after:w-1.5 after:h-1.5 after:bg-white after:rounded-full"></span>
+                        </label>
+                        <label class="relative flex p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-brand-500 transition-all shadow-sm">
+                            <input type="radio" name="quiz-mode" value="exam" class="sr-only peer">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-slate-900">Exam Mode</span>
+                                <span class="text-xs text-slate-500 mt-1">Simulate exam stress. Complete under a running clock. Review answers at the end.</span>
+                            </div>
+                            <span class="absolute right-4 top-4 w-4 h-4 rounded-full border border-slate-300 peer-checked:border-brand-600 peer-checked:bg-brand-600 flex items-center justify-center after:content-[''] after:w-1.5 after:h-1.5 after:bg-white after:rounded-full"></span>
+                        </label>
+                    </div>
+
+                    <!-- Tense select -->
+                    <div>
+                        <h4 class="text-xs font-semibold text-slate-500 mb-2">Filter Tenses (Choose one or more):</h4>
+                        <div class="flex flex-wrap gap-2" id="tense-filters">
+                            <button onclick="toggleTenseFilter(this, 'all')" class="tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white shadow-sm border border-brand-600" data-tense="all">
+                                All Tenses
+                            </button>
+                            <button onclick="toggleTenseFilter(this, 'simple-present')" class="tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100" data-tense="simple-present">
+                                Simple Present
+                            </button>
+                            <button onclick="toggleTenseFilter(this, 'present-continuous')" class="tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100" data-tense="present-continuous">
+                                Present Continuous
+                            </button>
+                            <button onclick="toggleTenseFilter(this, 'present-perfect')" class="tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100" data-tense="present-perfect">
+                                Present Perfect
+                            </button>
+                            <button onclick="toggleTenseFilter(this, 'simple-past')" class="tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100" data-tense="simple-past">
+                                Simple Past
+                            </button>
+                            <button onclick="toggleTenseFilter(this, 'past-continuous')" class="tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100" data-tense="past-continuous">
+                                Past Continuous
+                            </button>
+                            <button onclick="toggleTenseFilter(this, 'past-perfect')" class="tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100" data-tense="past-perfect">
+                                Past Perfect
+                            </button>
+                            <button onclick="toggleTenseFilter(this, 'simple-future')" class="tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100" data-tense="simple-future">
+                                Simple Future
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg shadow-brand-150 transform transition hover:-translate-y-0.5 active:translate-y-0 text-base">
+                    Begin Conversion Challenge
+                </button>
+            </div>
+        </section>
+
+        <!-- QUIZ ACTIVE SCREEN -->
+        <section id="screen-quiz" class="hidden">
+            <!-- Progress indicators -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                    <span id="question-progress-text">Question 1 of 10</span>
+                    <span id="question-tense-badge" class="px-2.5 py-1 bg-brand-100 text-brand-700 rounded-md font-semibold">Simple Present</span>
+                </div>
+                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div id="question-progress-bar" class="bg-brand-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Active sentence panel -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm mb-6 relative overflow-hidden">
+                <div class="absolute -right-8 -top-8 w-24 h-24 bg-brand-50 rounded-full opacity-50"></div>
+                <div class="relative z-10">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Active Voice sentence:</div>
+                    <p id="active-sentence" class="text-xl md:text-2xl font-bold text-slate-900 leading-snug">The chef prepares the gourmet meal.</p>
+                </div>
+            </div>
+
+            <!-- Multiple Choice Grid -->
+            <div class="space-y-3 mb-6" id="choices-container">
+                <!-- Javascript populated options -->
+            </div>
+
+            <!-- Feedback Panel (Only in Practice Mode) -->
+            <div id="explanation-card" class="hidden bg-white rounded-xl border border-slate-200 p-5 shadow-sm mb-6 transition-all duration-300">
+                <div class="flex gap-3">
+                    <div id="feedback-icon" class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
+                        <!-- SVG icons -->
+                    </div>
+                    <div class="flex-grow">
+                        <h4 id="feedback-title" class="font-bold text-slate-900 text-base mb-1">Correct Conversion!</h4>
+                        <p id="feedback-text" class="text-slate-600 text-sm leading-relaxed mb-4"></p>
+                        
+                        <!-- Analytical Breakdowns -->
+                        <div class="border-t border-slate-100 pt-4 mt-2">
+                            <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Structural Analysis:</h5>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                                <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                                    <div class="text-slate-400 font-medium mb-0.5">New Subject</div>
+                                    <div id="structure-subject" class="font-bold text-slate-800">The gourmet meal</div>
+                                </div>
+                                <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                                    <div class="text-slate-400 font-medium mb-0.5">Auxiliary "Be"</div>
+                                    <div id="structure-auxiliary" class="font-bold text-slate-800">is</div>
+                                </div>
+                                <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                                    <div class="text-slate-400 font-medium mb-0.5">Past Participle</div>
+                                    <div id="structure-participle" class="font-bold text-slate-800">prepared</div>
+                                </div>
+                                <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                                    <div class="text-slate-400 font-medium mb-0.5">Agent Phrase</div>
+                                    <div id="structure-agent" class="font-bold text-slate-800">by the chef</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex justify-end gap-3">
+                <button id="btn-submit" onclick="submitAnswer()" class="w-full sm:w-auto px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    Submit Selection
+                </button>
+                <button id="btn-next" onclick="nextQuestion()" class="hidden w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition">
+                    Continue
+                </button>
+            </div>
+        </section>
+
+        <!-- RESULTS / SUMMARY SCREEN -->
+        <section id="screen-results" class="hidden bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+            <div class="text-center max-w-xl mx-auto mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-50 text-brand-600 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Challenge Accomplished!</h2>
+                <p class="text-slate-500 text-sm">Review your passive voice metrics and analysis details below.</p>
+            </div>
+
+            <!-- Score Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 text-center">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Final Score</div>
+                    <div id="score-text" class="text-3xl font-black text-brand-600">80%</div>
+                    <div id="score-fraction" class="text-xs text-slate-500 font-semibold mt-1">8 / 10 questions correct</div>
+                </div>
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 text-center">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Completion Time</div>
+                    <div id="duration-text" class="text-3xl font-black text-slate-700">02:34</div>
+                    <div class="text-xs text-slate-500 font-semibold mt-1">Average: ~15s per question</div>
+                </div>
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 text-center">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Tense Mastery</div>
+                    <div id="mastery-text" class="text-sm font-bold text-emerald-600 mt-2">Perfect or Continuous needs work</div>
+                    <div class="text-xs text-slate-500 font-semibold mt-1">Evaluated across chosen tenses</div>
+                </div>
+            </div>
+
+            <!-- Itemized breakdown for Review -->
+            <div class="border-t border-slate-200 pt-6">
+                <h3 class="font-extrabold text-slate-900 text-lg mb-4">Detailed Question Review</h3>
+                <div class="space-y-4" id="review-list">
+                    <!-- Javascript populated reviews -->
+                </div>
+            </div>
+
+            <div class="mt-8 flex flex-col sm:flex-row justify-center gap-3 border-t border-slate-100 pt-6">
+                <button onclick="resetToHome()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-center transition">
+                    Modify Quiz Settings
+                </button>
+                <button onclick="restartQuizWithSameSettings()" class="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-center shadow-md transition">
+                    Try This Challenge Again
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 font-medium">
+        <p>© 2026 Passive Voice Conversion Quiz Suite. Created for Secondary 3 Academic Excellence.</p>
+    </footer>
+
+    <!-- GRAMMAR FORMULAS PANEL (Slide-out Drawer) -->
+    <div id="cheat-sheet-drawer" class="fixed inset-0 bg-slate-900/40 z-50 backdrop-blur-sm hidden transition-opacity flex justify-end">
+        <div class="w-full max-w-lg bg-white h-full shadow-2xl p-6 overflow-y-auto flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center pb-4 border-b border-slate-100 mb-6">
+                    <div class="flex items-center gap-2 text-brand-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        <h3 class="font-extrabold text-lg text-slate-950">Active vs. Passive Formulas</h3>
+                    </div>
+                    <button onclick="toggleCheatSheet()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <p class="text-sm text-slate-500 mb-6 leading-relaxed">
+                    Passive voice transitions require moving the direct object of the active sentence to the subject position, and then inserting the auxiliary verb <span class="font-semibold text-brand-600">to be</span> matched to the original tense and matching subject plurality, followed by the <span class="font-semibold text-brand-600">past participle</span> of the verb.
+                </p>
+
+                <!-- Formula Cards -->
+                <div class="space-y-4">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="font-bold text-sm text-slate-800 mb-1">Simple Present</div>
+                        <div class="text-xs text-slate-500 font-semibold mb-2">Active: Subject + Verb(s/es) + Object</div>
+                        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 font-mono text-xs text-brand-700 font-bold">
+                            Am / Is / Are + Past Participle
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="font-bold text-sm text-slate-800 mb-1">Present Continuous</div>
+                        <div class="text-xs text-slate-500 font-semibold mb-2">Active: Subject + Am/Is/Are + V-ing + Object</div>
+                        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 font-mono text-xs text-brand-700 font-bold">
+                            Am / Is / Are + <span class="text-emerald-600">being</span> + Past Participle
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="font-bold text-sm text-slate-800 mb-1">Present Perfect</div>
+                        <div class="text-xs text-slate-500 font-semibold mb-2">Active: Subject + Has/Have + Past Participle + Object</div>
+                        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 font-mono text-xs text-brand-700 font-bold">
+                            Has / Have + <span class="text-emerald-600">been</span> + Past Participle
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="font-bold text-sm text-slate-800 mb-1">Simple Past</div>
+                        <div class="text-xs text-slate-500 font-semibold mb-2">Active: Subject + Past Tense Verb + Object</div>
+                        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 font-mono text-xs text-brand-700 font-bold">
+                            Was / Were + Past Participle
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="font-bold text-sm text-slate-800 mb-1">Past Continuous</div>
+                        <div class="text-xs text-slate-500 font-semibold mb-2">Active: Subject + Was/Were + V-ing + Object</div>
+                        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 font-mono text-xs text-brand-700 font-bold">
+                            Was / Were + <span class="text-emerald-600">being</span> + Past Participle
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="font-bold text-sm text-slate-800 mb-1">Past Perfect</div>
+                        <div class="text-xs text-slate-500 font-semibold mb-2">Active: Subject + Had + Past Participle + Object</div>
+                        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 font-mono text-xs text-brand-700 font-bold">
+                            Had + <span class="text-emerald-600">been</span> + Past Participle
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="font-bold text-sm text-slate-800 mb-1">Simple Future</div>
+                        <div class="text-xs text-slate-500 font-semibold mb-2">Active: Subject + Will + Base Verb + Object</div>
+                        <div class="bg-white px-3 py-2 rounded-lg border border-slate-200 font-mono text-xs text-brand-700 font-bold">
+                            Will + <span class="text-emerald-600">be</span> + Past Participle
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="toggleCheatSheet()" class="mt-6 w-full py-3 bg-slate-900 text-white font-bold rounded-xl text-center hover:bg-slate-800 transition">
+                Close Guide
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        // Database of Questions designed specifically for Secondary 3 / Year 9
+        const allQuestions = [
+            {
+                id: 1,
+                tense: 'simple-present',
+                tenseLabel: 'Simple Present',
+                active: "The chef prepares the gourmet meal.",
+                options: [
+                    "The gourmet meal is prepared by the chef.",
+                    "The gourmet meal prepares by the chef.",
+                    "The gourmet meal is being prepared by the chef.",
+                    "The gourmet meal was prepared by the chef."
+                ],
+                correctIndex: 0,
+                subject: "The gourmet meal",
+                auxiliary: "is (singular present)",
+                participle: "prepared (regular v3)",
+                agent: "by the chef",
+                analyticalExplanation: "Since 'the gourmet meal' is singular and the active verb ('prepares') is in the simple present tense, the corresponding auxiliary form is 'is'. We pair this with the past participle 'prepared'. 'Is being prepared' is continuous, and 'was prepared' is past tense."
+            },
+            {
+                id: 2,
+                tense: 'simple-past',
+                tenseLabel: 'Simple Past',
+                active: "The mechanics repaired my vintage car.",
+                options: [
+                    "My vintage car was repaired by the mechanics.",
+                    "My vintage car is repaired by the mechanics.",
+                    "My vintage car were repaired by the mechanics.",
+                    "My vintage car has been repaired by the mechanics."
+                ],
+                correctIndex: 0,
+                subject: "My vintage car",
+                auxiliary: "was (singular past)",
+                participle: "repaired (regular v3)",
+                agent: "by the mechanics",
+                analyticalExplanation: "The active verb 'repaired' is simple past. The object 'my vintage car' is singular, demanding 'was' instead of 'were'. 'Is repaired' is present, and 'has been repaired' is present perfect."
+            },
+            {
+                id: 3,
+                tense: 'present-continuous',
+                tenseLabel: 'Present Continuous',
+                active: "The architect is designing the new towers.",
+                options: [
+                    "The new towers are designed by the architect.",
+                    "The new towers are being designed by the architect.",
+                    "The new towers is being designed by the architect.",
+                    "The new towers were being designed by the architect."
+                ],
+                correctIndex: 1,
+                subject: "The new towers",
+                auxiliary: "are being (plural present continuous)",
+                participle: "designed (regular v3)",
+                agent: "by the architect",
+                analyticalExplanation: "Active sentence is present continuous ('is designing'). The new subject 'the new towers' is plural, requiring 'are' as the plural present auxiliary, coupled with 'being' to preserve continuous aspect, plus the past participle."
+            },
+            {
+                id: 4,
+                tense: 'past-continuous',
+                tenseLabel: 'Past Continuous',
+                active: "The teacher was correcting the exams.",
+                options: [
+                    "The exams were corrected by the teacher.",
+                    "The exams was being corrected by the teacher.",
+                    "The exams were being corrected by the teacher.",
+                    "The exams had been corrected by the teacher."
+                ],
+                correctIndex: 2,
+                subject: "The exams",
+                auxiliary: "were being (plural past continuous)",
+                participle: "corrected (regular v3)",
+                agent: "by the teacher",
+                analyticalExplanation: "The active 'was correcting' is past continuous. The new subject 'the exams' is plural, demanding 'were' instead of 'was', and 'being' to maintain the progressive continuous action."
+            },
+            {
+                id: 5,
+                tense: 'present-perfect',
+                tenseLabel: 'Present Perfect',
+                active: "The author has completed three draft manuscripts.",
+                options: [
+                    "Three draft manuscripts has been completed by the author.",
+                    "Three draft manuscripts have been completed by the author.",
+                    "Three draft manuscripts was completed by the author.",
+                    "Three draft manuscripts were completed by the author."
+                ],
+                correctIndex: 1,
+                subject: "Three draft manuscripts",
+                auxiliary: "have been (plural present perfect)",
+                participle: "completed (regular v3)",
+                agent: "by the author",
+                analyticalExplanation: "The active tense is present perfect ('has completed'). When converted, the plural object 'three draft manuscripts' triggers the auxiliary shift from singular 'has' to plural 'have', combined with 'been' and V3."
+            },
+            {
+                id: 6,
+                tense: 'past-perfect',
+                tenseLabel: 'Past Perfect',
+                active: "The storm had destroyed the crops before sunset.",
+                options: [
+                    "The crops had been destroyed by the storm before sunset.",
+                    "The crops was destroyed by the storm before sunset.",
+                    "The crops were destroyed by the storm before sunset.",
+                    "The crops has been destroyed by the storm before sunset."
+                ],
+                correctIndex: 0,
+                subject: "The crops",
+                auxiliary: "had been (past perfect marker)",
+                participle: "destroyed (regular v3)",
+                agent: "by the storm",
+                analyticalExplanation: "For past perfect ('had destroyed'), the passive helper is universally 'had been' + past participle, irrespective of the singular/plural nature of the new subject ('the crops')."
+            },
+            {
+                id: 7,
+                tense: 'simple-future',
+                tenseLabel: 'Simple Future',
+                active: "The director will announce the winners tomorrow.",
+                options: [
+                    "The winners will announced by the director tomorrow.",
+                    "The winners will be announced by the director tomorrow.",
+                    "The winners would be announced by the director tomorrow.",
+                    "The winners are announced by the director tomorrow."
+                ],
+                correctIndex: 1,
+                subject: "The winners",
+                auxiliary: "will be (future marker)",
+                participle: "announced (regular v3)",
+                agent: "by the director",
+                analyticalExplanation: "Simple future ('will announce') requires 'will be' + past participle when restructuring into passive. 'Would' shifts modal tense unnecessarily, and 'are' changes tense to present."
+            },
+            {
+                id: 8,
+                tense: 'simple-present',
+                tenseLabel: 'Simple Present',
+                active: "Lions hunt zebras on the savannah.",
+                options: [
+                    "Zebras are hunted by lions on the savannah.",
+                    "Zebras is hunted by lions on the savannah.",
+                    "Zebras was hunted by lions on the savannah.",
+                    "Zebras are hunting by lions on the savannah."
+                ],
+                correctIndex: 0,
+                subject: "Zebras",
+                auxiliary: "are (plural present)",
+                participle: "hunted (regular v3)",
+                agent: "by lions",
+                analyticalExplanation: "'Zebras' is plural; thus, the simple present auxiliary 'are' is grammatically correct. 'Are hunting' remains active continuous."
+            },
+            {
+                id: 9,
+                tense: 'simple-past',
+                tenseLabel: 'Simple Past',
+                active: "The principal congratulated the prize-winning student.",
+                options: [
+                    "The prize-winning student was congratulated by the principal.",
+                    "The prize-winning student were congratulated by the principal.",
+                    "The prize-winning student had been congratulated by the principal.",
+                    "The prize-winning student is congratulated by the principal."
+                ],
+                correctIndex: 0,
+                subject: "The prize-winning student",
+                auxiliary: "was (singular past)",
+                participle: "congratulated (regular v3)",
+                agent: "by the principal",
+                analyticalExplanation: "Since 'the prize-winning student' is singular and the active verb is simple past ('congratulated'), we use the singular past auxiliary 'was'. 'Were' is used for plurals, and 'had been' is past perfect."
+            },
+            {
+                id: 10,
+                tense: 'present-continuous',
+                tenseLabel: 'Present Continuous',
+                active: "The gardener is planting fresh seeds.",
+                options: [
+                    "Fresh seeds is being planted by the gardener.",
+                    "Fresh seeds are being planted by the gardener.",
+                    "Fresh seeds are planted by the gardener.",
+                    "Fresh seeds were being planted by the gardener."
+                ],
+                correctIndex: 1,
+                subject: "Fresh seeds",
+                auxiliary: "are being (plural present continuous)",
+                participle: "planted (regular v3)",
+                agent: "by the gardener",
+                analyticalExplanation: "'Fresh seeds' is a plural noun. To turn present continuous 'is planting' to passive, we apply the plural indicator 'are' + the progressive token 'being' + participle."
+            },
+            {
+                id: 11,
+                tense: 'past-continuous',
+                tenseLabel: 'Past Continuous',
+                active: "The farmers were harvesting the wheat fields.",
+                options: [
+                    "The wheat fields was being harvested by the farmers.",
+                    "The wheat fields were harvested by the farmers.",
+                    "The wheat fields were being harvested by the farmers.",
+                    "The wheat fields had been harvested by the farmers."
+                ],
+                correctIndex: 2,
+                subject: "The wheat fields",
+                auxiliary: "were being (plural past continuous)",
+                participle: "harvested (regular v3)",
+                agent: "by the farmers",
+                analyticalExplanation: "Active sentence uses 'were harvesting' (past continuous). The plural new subject 'the wheat fields' aligns with 'were being harvested' to maintain aspect and agreement."
+            },
+            {
+                id: 12,
+                tense: 'present-perfect',
+                tenseLabel: 'Present Perfect',
+                active: "She has invited all her close friends.",
+                options: [
+                    "All her close friends has been invited by her.",
+                    "All her close friends have been invited by her.",
+                    "All her close friends was invited by her.",
+                    "All her close friends had been invited by her."
+                ],
+                correctIndex: 1,
+                subject: "All her close friends",
+                auxiliary: "have been (plural present perfect)",
+                participle: "invited (regular v3)",
+                agent: "by her",
+                analyticalExplanation: "Active tense is present perfect ('has invited'). The object 'all her close friends' is plural, which forces 'have been' instead of 'has been' to prevent agreement errors."
+            },
+            {
+                id: 13,
+                tense: 'past-perfect',
+                tenseLabel: 'Past Perfect',
+                active: "The manager had organized the files.",
+                options: [
+                    "The files had been organized by the manager.",
+                    "The files was organized by the manager.",
+                    "The files were being organized by the manager.",
+                    "The files has been organized by the manager."
+                ],
+                correctIndex: 0,
+                subject: "The files",
+                auxiliary: "had been (past perfect marker)",
+                participle: "organized (regular v3)",
+                agent: "by the manager",
+                analyticalExplanation: "Converting active past perfect ('had organized') requires 'had been' + past participle, ensuring tense consistency across both formats."
+            },
+            {
+                id: 14,
+                tense: 'simple-future',
+                tenseLabel: 'Simple Future',
+                active: "They will build a modern community center next year.",
+                options: [
+                    "A modern community center will build next year.",
+                    "A modern community center will be built by them next year.",
+                    "A modern community center would be built by them next year.",
+                    "A modern community center is built by them next year."
+                ],
+                correctIndex: 1,
+                subject: "A modern community center",
+                auxiliary: "will be (future marker)",
+                participle: "built (irregular v3)",
+                agent: "by them next year",
+                analyticalExplanation: "The active 'will build' dictates simple future. Passive transformation inserts 'will be' + V3 ('built'). Note that 'build' is an irregular verb (build - built - built)."
+            }
+        ];
+
+        // State variables
+        let selectedTenses = ['all'];
+        let activeQuizQuestions = [];
+        let currentQuestionIndex = 0;
+        let selectedAnswerIndex = null;
+        let isSubmitted = false;
+        let userQuizAnswers = []; // stores user choices and timings
+        let quizMode = 'practice'; // 'practice' or 'exam'
+        
+        let timerInterval = null;
+        let secondsElapsed = 0;
+
+        // Sound effects substitute (using modern AudioContext synthesize indicators)
+        const playSound = (type) => {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                if (type === 'correct') {
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.35);
+                } else if (type === 'wrong') {
+                    osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
+                    osc.frequency.setValueAtTime(196, ctx.currentTime + 0.1); // G3
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.35);
+                }
+            } catch(e) {
+                // AudioContext blocked or unsupported, fail silently
+            }
+        };
+
+        // Utility to toggle tense filters on the intro screen
+        function toggleTenseFilter(button, tense) {
+            if (tense === 'all') {
+                selectedTenses = ['all'];
+                document.querySelectorAll('.tense-btn').forEach(btn => {
+                    if (btn.getAttribute('data-tense') === 'all') {
+                        btn.className = "tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white shadow-sm border border-brand-600";
+                    } else {
+                        btn.className = "tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100";
+                    }
+                });
+            } else {
+                // Deselect 'all' if selected
+                if (selectedTenses.includes('all')) {
+                    selectedTenses = [];
+                    const allBtn = document.querySelector('[data-tense="all"]');
+                    allBtn.className = "tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100";
+                }
+
+                if (selectedTenses.includes(tense)) {
+                    selectedTenses = selectedTenses.filter(t => t !== tense);
+                    button.className = "tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100";
+                } else {
+                    selectedTenses.push(tense);
+                    button.className = "tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white shadow-sm border border-brand-600";
+                }
+
+                // If nothing is selected, fall back to 'all'
+                if (selectedTenses.length === 0) {
+                    selectedTenses = ['all'];
+                    const allBtn = document.querySelector('[data-tense="all"]');
+                    allBtn.className = "tense-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white shadow-sm border border-brand-600";
+                }
+            }
+        }
+
+        // Toggles Drawer
+        function toggleCheatSheet() {
+            const drawer = document.getElementById('cheat-sheet-drawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        // Global timer control
+        function startTimer() {
+            secondsElapsed = 0;
+            const timerEl = document.getElementById('session-timer');
+            timerEl.classList.remove('hidden');
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+                const secs = String(secondsElapsed % 60).padStart(2, '0');
+                timerEl.textContent = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // Setup the question list based on the filters
+        function prepareQuestions() {
+            let filtered = [];
+            if (selectedTenses.includes('all')) {
+                filtered = [...allQuestions];
+            } else {
+                filtered = allQuestions.filter(q => selectedTenses.includes(q.tense));
+            }
+
+            // Shuffle filtered pool and take maximum 10 questions to maintain attention/valid diagnostic size
+            filtered.sort(() => Math.random() - 0.5);
+            activeQuizQuestions = filtered.slice(0, 10);
+        }
+
+        // Start Quiz
+        function startQuiz() {
+            quizMode = document.querySelector('input[name="quiz-mode"]:checked').value;
+            prepareQuestions();
+
+            if (activeQuizQuestions.length === 0) {
+                // Safety guard in case no questions matched
+                activeQuizQuestions = [...allQuestions].slice(0, 10);
+            }
+
+            currentQuestionIndex = 0;
+            userQuizAnswers = [];
+            
+            // Switch screen
+            document.getElementById('screen-intro').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            
+            startTimer();
+            renderQuestion();
+        }
+
+        // Render current question in UI
+        function renderQuestion() {
+            isSubmitted = false;
+            selectedAnswerIndex = null;
+            document.getElementById('explanation-card').classList.add('hidden');
+            document.getElementById('btn-next').classList.add('hidden');
+            
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.classList.remove('hidden');
+            btnSubmit.disabled = true;
+
+            const q = activeQuizQuestions[currentQuestionIndex];
+            
+            // Set Progress Text and Bar
+            document.getElementById('question-progress-text').textContent = `Question ${currentQuestionIndex + 1} of ${activeQuizQuestions.length}`;
+            document.getElementById('question-tense-badge').textContent = q.tenseLabel;
+            
+            const progressPct = ((currentQuestionIndex) / activeQuizQuestions.length) * 100;
+            document.getElementById('question-progress-bar').style.width = `${progressPct}%`;
+
+            // Active Voice sentence set
+            document.getElementById('active-sentence').textContent = q.active;
+
+            // Generate option items
+            const container = document.getElementById('choices-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const optButton = document.createElement('button');
+                optButton.className = "choice-item w-full text-left p-4 bg-white border border-slate-200 rounded-xl hover:border-brand-500 hover:bg-slate-50 transition-all flex items-center gap-3 group relative shadow-sm";
+                optButton.onclick = () => selectOption(idx);
+                optButton.innerHTML = `
+                    <span class="choice-marker flex-shrink-0 w-8 h-8 rounded-lg bg-slate-100 text-slate-500 font-bold text-sm flex items-center justify-center group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
+                        ${String.fromCharCode(65 + idx)}
+                    </span>
+                    <span class="text-slate-800 text-sm md:text-base font-semibold pr-8">${opt}</span>
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 check-indicator transition-opacity text-brand-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                `;
+                container.appendChild(optButton);
+            });
+        }
+
+        // Handle option clicks
+        function selectOption(index) {
+            if (isSubmitted) return; // ignore actions post-submission
+            
+            selectedAnswerIndex = index;
+            document.getElementById('btn-submit').disabled = false;
+
+            // Update option designs visually
+            const buttons = document.querySelectorAll('.choice-item');
+            buttons.forEach((btn, idx) => {
+                const marker = btn.querySelector('.choice-marker');
+                const check = btn.querySelector('.check-indicator');
+                
+                if (idx === index) {
+                    btn.className = "choice-item w-full text-left p-4 bg-brand-50/70 border-2 border-brand-500 rounded-xl transition-all flex items-center gap-3 group relative shadow-sm scale-[1.01]";
+                    marker.className = "choice-marker flex-shrink-0 w-8 h-8 rounded-lg bg-brand-600 text-white font-bold text-sm flex items-center justify-center transition-colors";
+                    check.classList.remove('opacity-0');
+                    check.classList.add('opacity-100');
+                } else {
+                    btn.className = "choice-item w-full text-left p-4 bg-white border border-slate-200 rounded-xl hover:border-brand-500 hover:bg-slate-50 transition-all flex items-center gap-3 group relative shadow-sm";
+                    marker.className = "choice-marker flex-shrink-0 w-8 h-8 rounded-lg bg-slate-100 text-slate-500 font-bold text-sm flex items-center justify-center group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors";
+                    check.classList.remove('opacity-100');
+                    check.classList.add('opacity-0');
+                }
+            });
+        }
+
+        // Handle Answer Submission
+        function submitAnswer() {
+            if (selectedAnswerIndex === null || isSubmitted) return;
+
+            isSubmitted = true;
+            const q = activeQuizQuestions[currentQuestionIndex];
+            const isCorrect = selectedAnswerIndex === q.correctIndex;
+            
+            userQuizAnswers.push({
+                questionId: q.id,
+                activeSentence: q.active,
+                correctAnswerText: q.options[q.correctIndex],
+                selectedAnswerText: q.options[selectedAnswerIndex],
+                isCorrect: isCorrect,
+                tenseLabel: q.tenseLabel,
+                tense: q.tense,
+                explanation: q.analyticalExplanation
+            });
+
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.classList.add('hidden');
+            
+            const btnNext = document.getElementById('btn-next');
+            btnNext.classList.remove('hidden');
+
+            if (quizMode === 'practice') {
+                // Practice mode provides immediate active visual feedback & structural breakdowns
+                showFeedbackPanel(isCorrect, q);
+                highlightOptionsImmediate(isCorrect, q);
+            } else {
+                // Exam mode bypasses detailed feedback & proceeds instantly
+                nextQuestion();
+            }
+        }
+
+        // Show analytical explanation in Practice Mode
+        function showFeedbackPanel(isCorrect, question) {
+            const expCard = document.getElementById('explanation-card');
+            const icon = document.getElementById('feedback-icon');
+            const title = document.getElementById('feedback-title');
+            const desc = document.getElementById('feedback-text');
+
+            // Set structures values
+            document.getElementById('structure-subject').textContent = question.subject;
+            document.getElementById('structure-auxiliary').textContent = question.auxiliary;
+            document.getElementById('structure-participle').textContent = question.participle;
+            document.getElementById('structure-agent').textContent = question.agent;
+
+            expCard.classList.remove('hidden');
+            desc.textContent = question.analyticalExplanation;
+
+            if (isCorrect) {
+                playSound('correct');
+                icon.className = "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-emerald-100 text-emerald-600";
+                icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>`;
+                title.textContent = "Excellent Conversion!";
+                title.className = "font-bold text-emerald-800 text-base mb-1";
+                expCard.className = "bg-emerald-50/50 rounded-xl border border-emerald-200 p-5 shadow-sm mb-6 correct-pulse";
+            } else {
+                playSound('wrong');
+                icon.className = "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-rose-100 text-rose-600";
+                icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>`;
+                title.textContent = "Incorrect Tense Structure";
+                title.className = "font-bold text-rose-800 text-base mb-1";
+                expCard.className = "bg-rose-50/50 rounded-xl border border-rose-200 p-5 shadow-sm mb-6 wrong-shake";
+            }
+        }
+
+        // Apply immediate red/green colors to answers in Practice Mode
+        function highlightOptionsImmediate(isCorrect, question) {
+            const buttons = document.querySelectorAll('.choice-item');
+            buttons.forEach((btn, idx) => {
+                const marker = btn.querySelector('.choice-marker');
+                const check = btn.querySelector('.check-indicator');
+                
+                btn.onclick = null; // disable clicks
+                btn.style.cursor = 'default';
+
+                if (idx === question.correctIndex) {
+                    btn.className = "choice-item w-full text-left p-4 bg-emerald-50 border-2 border-emerald-500 rounded-xl transition-all flex items-center gap-3 relative shadow-sm";
+                    marker.className = "choice-marker flex-shrink-0 w-8 h-8 rounded-lg bg-emerald-600 text-white font-bold text-sm flex items-center justify-center";
+                    check.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>`;
+                    check.className = "absolute right-4 top-1/2 -translate-y-1/2 opacity-100 transition-opacity";
+                } else if (idx === selectedAnswerIndex && !isCorrect) {
+                    btn.className = "choice-item w-full text-left p-4 bg-rose-50 border-2 border-rose-500 rounded-xl transition-all flex items-center gap-3 relative shadow-sm";
+                    marker.className = "choice-marker flex-shrink-0 w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-sm flex items-center justify-center";
+                    check.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>`;
+                    check.className = "absolute right-4 top-1/2 -translate-y-1/2 opacity-100 transition-opacity";
+                } else {
+                    btn.className = "choice-item w-full text-left p-4 bg-slate-50 border border-slate-200 opacity-60 rounded-xl flex items-center gap-3 relative shadow-sm";
+                    marker.className = "choice-marker flex-shrink-0 w-8 h-8 rounded-lg bg-slate-200 text-slate-400 font-bold text-sm flex items-center justify-center";
+                    check.className = "absolute right-4 top-1/2 -translate-y-1/2 opacity-0 transition-opacity";
+                }
+            });
+        }
+
+        // Navigate next question / show summary
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < activeQuizQuestions.length) {
+                renderQuestion();
+            } else {
+                showResultsSummary();
+            }
+        }
+
+        // Show Quiz final score screen
+        function showResultsSummary() {
+            stopTimer();
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+
+            const total = activeQuizQuestions.length;
+            const correct = userQuizAnswers.filter(a => a.isCorrect).length;
+            const scorePct = Math.round((correct / total) * 100);
+
+            // Metrics population
+            document.getElementById('score-text').textContent = `${scorePct}%`;
+            document.getElementById('score-fraction').textContent = `${correct} / ${total} correct answers`;
+
+            // Duration math
+            const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+            const secs = String(secondsElapsed % 60).padStart(2, '0');
+            document.getElementById('duration-text').textContent = `${mins}:${secs}`;
+
+            // Analyze weak tenses
+            const tenseResults = {};
+            userQuizAnswers.forEach(ans => {
+                if (!tenseResults[ans.tenseLabel]) {
+                    tenseResults[ans.tenseLabel] = { total: 0, correct: 0 };
+                }
+                tenseResults[ans.tenseLabel].total++;
+                if (ans.isCorrect) tenseResults[ans.tenseLabel].correct++;
+            });
+
+            let weakestTenses = [];
+            for (const [label, scoreObj] of Object.entries(tenseResults)) {
+                if (scoreObj.correct < scoreObj.total) {
+                    weakestTenses.push(label);
+                }
+            }
+
+            const masteryEl = document.getElementById('mastery-text');
+            if (correct === total) {
+                masteryEl.textContent = "Perfect Mastery!";
+                masteryEl.className = "text-sm font-bold text-emerald-600 mt-2";
+            } else if (weakestTenses.length > 0) {
+                masteryEl.textContent = `Needs work: ${weakestTenses[0]}`;
+                masteryEl.className = "text-sm font-bold text-amber-600 mt-2";
+            } else {
+                masteryEl.textContent = "Solid Understanding!";
+                masteryEl.className = "text-sm font-bold text-emerald-600 mt-2";
+            }
+
+            // Populate the detailed itemized review list
+            const reviewContainer = document.getElementById('review-list');
+            reviewContainer.innerHTML = '';
+
+            userQuizAnswers.forEach((ans, idx) => {
+                const item = document.createElement('div');
+                item.className = `p-5 rounded-xl border ${ans.isCorrect ? 'bg-emerald-50/20 border-emerald-200' : 'bg-rose-50/20 border-rose-200'} transition-all`;
+                item.innerHTML = `
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+                        <span class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Question ${idx + 1} (${ans.tenseLabel})</span>
+                        <span class="px-2 py-0.5 text-[10px] font-extrabold uppercase rounded ${ans.isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            ${ans.isCorrect ? 'Correct' : 'Incorrect'}
+                        </span>
+                    </div>
+                    <div class="space-y-2 mb-3">
+                        <p class="text-xs text-slate-500 font-semibold"><span class="text-slate-400">Active Form:</span> "${ans.activeSentence}"</p>
+                        <p class="text-sm font-bold ${ans.isCorrect ? 'text-slate-800' : 'text-slate-600'}">
+                            <span class="text-xs text-slate-400 font-semibold block sm:inline">Your Conversion:</span> "${ans.selectedAnswerText}"
+                        </p>
+                        ${!ans.isCorrect ? `
+                        <p class="text-sm font-bold text-emerald-700">
+                            <span class="text-xs text-slate-400 font-semibold block sm:inline">Correct Conversion:</span> "${ans.correctAnswerText}"
+                        </p>
+                        ` : ''}
+                    </div>
+                    <div class="border-t border-dashed ${ans.isCorrect ? 'border-emerald-100' : 'border-rose-100'} pt-3">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Analytical Formula Breakdown:</span>
+                        <p class="text-xs text-slate-600 leading-relaxed">${ans.explanation}</p>
+                    </div>
+                `;
+                reviewContainer.appendChild(item);
+            });
+        }
+
+        function resetToHome() {
+            document.getElementById('screen-results').classList.add('hidden');
+            document.getElementById('screen-intro').classList.remove('hidden');
+            document.getElementById('session-timer').classList.add('hidden');
+        }
+
+        function restartQuizWithSameSettings() {
+            document.getElementById('screen-results').classList.add('hidden');
+            startQuiz();
+        }
+    </script>
+</body>
+</html>

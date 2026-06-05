@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exam Script Distribution (Minimise Own Group)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom CSS Variables and Scrollbar styling matching requested theme -->
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #0f1b33;
+      --panel2: #0c172c;
+      --text: #e8eefc;
+      --muted: #b8c6ee;
+      --line: #243a6b;
+      --accent: #7aa2ff;
+      --good: #38d39f;
+      --warn: #ffcc66;
+      --bad: #ff6b6b;
+      --btn: #1a2d56;
+      --btn2: #152649;
+      --chip: #132446;
+      --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+      --radius: 14px;
+    }
+    
+    /* Elegant scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--panel2);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    body {
+      background: radial-gradient(1200px 600px at 20% -20%, rgba(122,162,255,.22), transparent 60%),
+                  radial-gradient(900px 500px at 120% 20%, rgba(56,211,159,.18), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 70%), var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    input, select {
+      background: var(--panel2);
+      border: 1px solid rgba(36, 58, 107, .9);
+      color: var(--text);
+    }
+
+    input:focus, select:focus {
+      border-color: rgba(122, 162, 255, .95);
+      box-shadow: 0 0 0 3px rgba(122, 162, 255, .18);
+    }
+
+    .btn {
+      background: linear-gradient(180deg, rgba(255,255,255,.04), transparent 60%), var(--btn);
+      border: 1px solid rgba(36, 58, 107, .95);
+      transition: all 0.15s ease;
+    }
+    .btn:hover {
+      border-color: rgba(122, 162, 255, .75);
+      box-shadow: 0 0 12px rgba(122, 162, 255, 0.15);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 60%), var(--btn2);
+    }
+
+    .btn-danger {
+      border-color: rgba(255, 107, 107, .55);
+    }
+    .btn-danger:hover {
+      border-color: rgba(255, 107, 107, .85);
+      background: rgba(255, 107, 107, 0.1);
+    }
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="min-h-screen py-6 px-4 md:px-8">
+  <!-- Toast notification system container -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div>
+        <h1 class="text-2xl font-extrabold tracking-tight text-white flex items-center gap-3">
+          <span>📝</span> Exam Script Distribution App
+        </h1>
+        <p class="text-xs md:text-sm text-slate-300 mt-1 max-w-2xl">
+          Enter teachers, group targets, and question volumes. Run the flow solver to 
+          <span class="text-indigo-300 font-semibold underline decoration-indigo-500 decoration-2">minimise grading own classes</span> while balancing exact target workloads.
+        </p>
+      </div>
+
+      <!-- Quick Setup Preset triggers for simple testing -->
+      <div class="flex flex-wrap gap-2">
+        <button class="btn btn-secondary text-xs px-3 py-2 rounded-xl text-slate-200 font-semibold" onclick="loadDemoPreset('school')">
+          🏫 Load High School Preset
+        </button>
+        <button class="btn btn-secondary text-xs px-3 py-2 rounded-xl text-slate-200 font-semibold" onclick="loadDemoPreset('university')">
+          🎓 Load University Preset
+        </button>
+        <button class="btn btn-danger text-xs px-3 py-2 rounded-xl text-rose-300 font-semibold" id="btnReset">
+          🧹 Clear All
+        </button>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <section class="lg:col-span-7 flex flex-col gap-6">
+        
+        <!-- SECTION 1: Input Setup Card -->
+        <div class="card rounded-[var(--radius)] overflow-hidden">
+          <div class="px-5 py-4 border-b border-[rgba(36,58,107,0.65)] bg-gradient-to-b from-[rgba(122,162,255,0.08)] to-transparent flex justify-between items-center">
+            <h2 class="text-sm font-bold tracking-wide uppercase text-indigo-200 flex items-center gap-2">
+              <span>🛠️</span> 1) Input Data Setup
+            </h2>
+          </div>
+
+          <div class="p-5 flex flex-col gap-6">
+            <!-- Split forms for Teacher Input vs Group/Question management -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              <!-- Left Mini Column: Teachers Entry -->
+              <div class="flex flex-col gap-4">
+                <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-1">Add Teacher Details</h3>
+                
+                <div class="flex flex-col gap-3">
+                  <div>
+                    <label for="tName" class="block text-xs font-medium text-slate-300 mb-1">Teacher Name</label>
+                    <input id="tName" type="text" class="w-full px-3 py-2 rounded-xl text-sm" placeholder="e.g., Prof. Sarah Jenkins" />
+                  </div>
+
+                  <div>
+                    <label for="tGroups" class="block text-xs font-medium text-slate-300 mb-1">Teaches Group(s) <span class="text-[10px] text-slate-400 font-normal">(Hold Ctrl/Cmd to select multiple)</span></label>
+                    <select id="tGroups" class="w-full rounded-xl text-sm p-2" multiple size="4"></select>
+                  </div>
+
+                  <div>
+                    <label for="tStudents" class="block text-xs font-medium text-slate-300 mb-1">Target Workload <span class="text-[10px] text-slate-400 font-normal">(Number of Scripts to Mark)</span></label>
+                    <input id="tStudents" type="number" inputmode="numeric" min="0" step="1" class="w-full px-3 py-2 rounded-xl text-sm font-mono" placeholder="e.g., 35" />
+                  </div>
+                </div>
+
+                <button class="btn w-full mt-2 text-xs py-2.5 rounded-xl text-white font-bold" id="btnSaveTeacher">
+                  ➕ Add Teacher to Panel
+                </button>
+              </div>
+
+              <!-- Right Mini Column: Groups and Questions Setup -->
+              <div class="flex flex-col gap-4 border-t md:border-t-0 md:border-l border-slate-800 md:pl-6">
+                <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-1">Add Groups & Questions</h3>
+                
+                <div class="flex flex-col gap-4">
+                  <!-- Group Adding Form -->
+                  <div>
+                    <label for="gName" class="block text-xs font-medium text-slate-300 mb-1">New Class / Student Group</label>
+                    <div class="flex gap-2">
+                      <input id="gName" type="text" class="flex-1 px-3 py-2 rounded-xl text-sm" placeholder="e.g., Class-10A" />
+                      <button class="btn px-4 text-xs font-bold text-indigo-200 rounded-xl whitespace-nowrap" id="btnAddGroup">
+                        + Group
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Question Adding Form -->
+                  <div>
+                    <label for="qName" class="block text-xs font-medium text-slate-300 mb-1">New Question Label</label>
+                    <div class="flex gap-2">
+                      <input id="qName" type="text" class="flex-1 px-3 py-2 rounded-xl text-sm" placeholder="e.g., Q1" />
+                      <button class="btn px-4 text-xs font-bold text-indigo-200 rounded-xl whitespace-nowrap" id="btnAddQuestion">
+                        + Question
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Question Removal Action -->
+                  <div class="flex justify-end">
+                    <button class="btn btn-danger text-xs px-3 py-1.5 rounded-lg text-rose-300 font-semibold" id="btnRemoveQuestion">
+                      🗑️ Remove Last Question
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Render List of current active teachers -->
+            <div class="border-t border-slate-800 pt-5">
+              <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-3">Registered Teachers</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[220px] overflow-y-auto pr-1" id="teacherList">
+                <!-- Teacher items render here dynamically -->
+              </div>
+            </div>
+
+            <!-- Section 2: Count Table -->
+            <div class="border-t border-slate-800 pt-5">
+              <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-3">Scripts count matrix</h3>
+              <div class="tableWrap overflow-x-auto border border-slate-800 rounded-xl bg-slate-950/40">
+                <table id="countsTable" class="w-full text-left"></table>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-2 italic">
+                💡 Double click or type numbers directly into the grid above. It automatically computes totals.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <section class="lg:col-span-5 flex flex-col gap-6">
+        
+        <!-- Solver Controls & KPIs Card -->
+        <div class="card rounded-[var(--radius)] overflow-hidden">
+          <div class="px-5 py-4 border-b border-[rgba(36,58,107,0.65)] bg-gradient-to-b from-[rgba(122,162,255,0.08)] to-transparent">
+            <h2 class="text-sm font-bold tracking-wide uppercase text-indigo-200 flex items-center gap-2">
+              <span>📊</span> System Status & Solver
+            </h2>
+          </div>
+
+          <div class="p-5 flex flex-col gap-5">
+            <!-- KPIs Panel -->
+            <div class="grid grid-cols-3 gap-3">
+              <div class="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-center">
+                <div class="text-[10px] text-slate-400 uppercase font-semibold">Teachers</div>
+                <div class="text-lg font-bold text-white mt-1 font-mono" id="kTeachers">0</div>
+              </div>
+              <div class="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-center">
+                <div class="text-[10px] text-slate-400 uppercase font-semibold">Groups</div>
+                <div class="text-lg font-bold text-white mt-1 font-mono" id="kGroups">0</div>
+              </div>
+              <div class="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-center">
+                <div class="text-[10px] text-slate-400 uppercase font-semibold">Questions</div>
+                <div class="text-lg font-bold text-white mt-1 font-mono" id="kQuestions">0</div>
+              </div>
+            </div>
+
+            <!-- Script Counts Balancing Summary -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex flex-col gap-3">
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-slate-300">Total Scripts:</span>
+                <span class="font-bold text-white font-mono text-sm" id="kTotalScripts">0</span>
+              </div>
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-slate-300">Total Teacher Load Quota:</span>
+                <span class="font-bold text-white font-mono text-sm" id="kTotalStudents">0</span>
+              </div>
+              <div class="flex justify-between items-center text-xs border-t border-slate-800 pt-2">
+                <span class="text-slate-300">Own-group assignments:</span>
+                <span class="font-bold text-amber-400 font-mono text-sm" id="kOwnAssigned">0</span>
+              </div>
+
+              <!-- Balance warning & helper button -->
+              <div id="balanceMessage" class="text-xs p-2.5 rounded-lg mt-1 hidden"></div>
+            </div>
+
+            <!-- Action Button Triggers -->
+            <div class="flex flex-col gap-2 mt-2">
+              <button class="btn w-full py-3 rounded-xl text-white font-bold text-sm tracking-wide bg-gradient-to-r from-indigo-600 to-sky-600 hover:opacity-90 shadow-md flex justify-center items-center gap-2" id="btnGenerate">
+                ⚡ Calculate Optimal Distribution
+              </button>
+            </div>
+            
+            <div class="p-3 rounded-xl border border-dashed border-slate-800 bg-slate-900/10 text-xs flex flex-col gap-2">
+              <div id="status" class="text-slate-300 font-medium leading-relaxed"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual teacher load bar visualizer -->
+        <div class="card rounded-[var(--radius)] overflow-hidden">
+          <div class="px-5 py-3.5 border-b border-[rgba(36,58,107,0.65)] bg-slate-900/40">
+            <h3 class="text-xs font-bold text-slate-300 tracking-wider uppercase flex items-center gap-2">
+              <span>⚖️</span> Workload Balance Tracker
+            </h3>
+          </div>
+          <div class="p-4 flex flex-col gap-3" id="workloadBarsContainer">
+            <!-- Dynamic elements load here -->
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- OUTPUT SECTION -->
+    <div class="mt-8 grid grid-cols-1 gap-6">
+      <div class="card rounded-[var(--radius)] overflow-hidden">
+        <div class="px-5 py-4 border-b border-[rgba(36,58,107,0.65)] bg-gradient-to-b from-[rgba(122,162,255,0.08)] to-transparent flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 class="text-sm font-bold tracking-wide uppercase text-indigo-200 flex items-center gap-2">
+              <span>📋</span> 2) Generated Script Assignments
+            </h2>
+            <p class="text-[10px] text-slate-300 mt-1">Detailed allocation grid showing exact question distribution</p>
+          </div>
+          <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+            <button class="btn btn-secondary text-xs px-3 py-2 rounded-xl text-slate-200 font-bold flex items-center gap-2" id="btnDownloadCSV" disabled>
+              📥 Download CSV Export
+            </button>
+          </div>
+        </div>
+
+        <div class="p-5 flex flex-col gap-6">
+          <!-- Main Output Matrix -->
+          <div>
+            <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-3">Teacher vs Group Distribution Matrix</h3>
+            <div class="tableWrap overflow-x-auto border border-slate-800 rounded-xl bg-slate-950/40">
+              <table id="outputTable" class="w-full text-left min-w-[600px]"></table>
+            </div>
+          </div>
+
+          <!-- Secondary totals breakdown output table -->
+          <div class="border-t border-slate-800 pt-5">
+            <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-3">Summary of Question Totals Assigned to Each Teacher</h3>
+            <div class="tableWrap overflow-x-auto border border-slate-800 rounded-xl bg-slate-950/40">
+              <table id="questionTotalsTable" class="w-full text-left min-w-[500px]"></table>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2 mt-4">
+            <button class="btn text-xs px-4 py-2.5 rounded-xl text-white font-bold flex items-center gap-2" id="btnDownloadCSV2" disabled>
+              📥 Download Consolidated CSV Report
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // State architecture
+    const state = {
+      teachers: [], // {id, name, groups:Set, students:int}
+      groups: [],
+      questions: [],
+      counts: new Map(), // key `${group}||${question}` -> integer
+      lastResult: null,
+    };
+
+    const el = (id) => document.getElementById(id);
+
+    // Random ID Generator Helper
+    function uid(prefix = "id") {
+      return prefix + "_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
+    }
+
+    // Sanitizers
+    function sanitizeLabel(s) { 
+      return (s ?? "").toString().trim(); 
+    }
+    
+    function keyGQ(g, q) { 
+      return `${g}||${q}`; 
+    }
+    
+    function getCount(g, q) { 
+      return Number(state.counts.get(keyGQ(g, q)) ?? 0); 
+    }
+    
+    function setCount(g, q, val) {
+      const n = Number.isFinite(val) ? Math.max(0, Math.floor(val)) : 0;
+      state.counts.set(keyGQ(g, q), n);
+    }
+
+    // Calculators
+    function totalScripts() {
+      let sum = 0;
+      for (const g of state.groups) {
+        for (const q of state.questions) {
+          sum += getCount(g, q);
+        }
+      }
+      return sum;
+    }
+
+    function totalStudents() {
+      return state.teachers.reduce((a, t) => a + (Number(t.students) || 0), 0);
+    }
+
+    // UI Toast System helper
+    function showToast(message, type = "info") {
+      const container = el("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border transition-all duration-300 transform translate-y-2 opacity-0 text-xs max-w-sm font-medium`;
+      
+      let bg = "bg-slate-850 border-slate-700 text-slate-100";
+      let icon = "ℹ️";
+      if (type === "success") {
+        bg = "bg-emerald-950/90 border-emerald-500/30 text-emerald-200";
+        icon = "✅";
+      } else if (type === "warning") {
+        bg = "bg-amber-950/90 border-amber-500/30 text-amber-200";
+        icon = "⚠️";
+      } else if (type === "error") {
+        bg = "bg-rose-950/90 border-rose-500/30 text-rose-200";
+        icon = "❌";
+      }
+      
+      toast.className += ` ${bg}`;
+      toast.innerHTML = `<span>${icon}</span><p class="leading-snug">${message}</p>`;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.remove("translate-y-2", "opacity-0");
+      }, 10);
+      
+      setTimeout(() => {
+        toast.classList.add("translate-y-2", "opacity-0");
+        setTimeout(() => { toast.remove(); }, 300);
+      }, 4000);
+    }
+
+    // Refresh Selector Box
+    function refreshSelectors() {
+      const sel = el("tGroups");
+      sel.innerHTML = "";
+      if (state.groups.length === 0) {
+        const opt = document.createElement("option");
+        opt.disabled = true;
+        opt.textContent = "Add groups first (e.g., Class-10A)";
+        sel.appendChild(opt);
+        return;
+      }
+      for (const g of state.groups) {
+        const opt = document.createElement("option");
+        opt.value = g;
+        opt.textContent = g;
+        sel.appendChild(opt);
+      }
+    }
+
+    // Teacher Saving Click Handler
+    el("btnSaveTeacher").onclick = () => {
+      const name = sanitizeLabel(el("tName").value);
+      const studentsVal = parseInt(el("tStudents").value);
+      
+      if (!name) {
+        showToast("Teacher name cannot be empty", "error");
+        return;
+      }
+      if (isNaN(studentsVal) || studentsVal < 0) {
+        showToast("Please enter a valid target workload limit", "error");
+        return;
+      }
+      
+      const selectedGroups = new Set();
+      const sel = el("tGroups");
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].selected) {
+          selectedGroups.add(sel.options[i].value);
+        }
+      }
+      
+      state.teachers.push({
+        id: uid("t"),
+        name,
+        groups: selectedGroups,
+        students: studentsVal
+      });
+      
+      el("tName").value = "";
+      el("tStudents").value = "";
+      for (let i = 0; i < sel.options.length; i++) {
+        sel.options[i].selected = false;
+      }
+      
+      showToast(`Teacher "${name}" added to panels`, "success");
+      state.lastResult = null;
+      renderAll();
+    };
+
+    // Group Saving Click Handler
+    el("btnAddGroup").onclick = () => {
+      const name = sanitizeLabel(el("gName").value);
+      if (!name) {
+        showToast("Group label cannot be blank", "error");
+        return;
+      }
+      if (state.groups.includes(name)) {
+        showToast("Group label already configured", "warning");
+        return;
+      }
+      
+      state.groups.push(name);
+      el("gName").value = "";
+      showToast(`Group "${name}" established`, "success");
+      state.lastResult = null;
+      renderAll();
+    };
+
+    // Question Adding Click Handler
+    el("btnAddQuestion").onclick = () => {
+      const name = sanitizeLabel(el("qName").value);
+      if (!name) {
+        showToast("Question label cannot be blank", "error");
+        return;
+      }
+      if (state.questions.includes(name)) {
+        showToast("Question code already configured", "warning");
+        return;
+      }
+      
+      state.questions.push(name);
+      el("qName").value = "";
+      showToast(`Question "${name}" established`, "success");
+      state.lastResult = null;
+      renderAll();
+    };
+
+    // Question Removal Click Handler
+    el("btnRemoveQuestion").onclick = () => {
+      if (state.questions.length === 0) {
+        showToast("No active questions to remove", "warning");
+        return;
+      }
+      const removed = state.questions.pop();
+      showToast(`Question "${removed}" popped successfully`, "info");
+      state.lastResult = null;
+      renderAll();
+    };
+
+    function renderTeachers() {
+      const box = el("teacherList");
+      box.innerHTML = "";
+      if (state.teachers.length === 0) {
+        box.innerHTML = `<div class="text-xs text-slate-400 p-2 italic col-span-2">No teachers configured yet. Add details above.</div>`;
+        return;
+      }
+
+      for (const t of state.teachers) {
+        const div = document.createElement("div");
+        div.className = "p-3 rounded-xl border border-slate-800 bg-slate-900/30 flex items-start justify-between gap-3 text-xs";
+
+        const left = document.createElement("div");
+        left.className = "flex-1 min-w-0";
+
+        const name = document.createElement("div");
+        name.className = "font-bold text-slate-200 truncate";
+        name.textContent = t.name;
+
+        const info = document.createElement("div");
+        info.className = "text-[10px] text-slate-400 mt-1 flex flex-wrap gap-1.5 items-center";
+        
+        const qBadge = document.createElement("span");
+        qBadge.className = "px-1.5 py-0.5 rounded-md bg-indigo-950 text-indigo-300 font-semibold font-mono border border-indigo-900/55";
+        qBadge.textContent = `${t.students} target`;
+        info.appendChild(qBadge);
+
+        const groups = [...t.groups];
+        if (groups.length) {
+          groups.forEach(g => {
+            const gb = document.createElement("span");
+            gb.className = "px-1.5 py-0.5 rounded-md bg-emerald-950 text-emerald-300 border border-emerald-900/55";
+            gb.textContent = g;
+            info.appendChild(gb);
+          });
+        } else {
+          const emptyG = document.createElement("span");
+          emptyG.className = "text-slate-500 italic";
+          emptyG.textContent = "(No assigned groups)";
+          info.appendChild(emptyG);
+        }
+
+        left.appendChild(name);
+        left.appendChild(info);
+
+        const btn = document.createElement("button");
+        btn.className = "text-xs text-rose-400 hover:text-rose-300 font-bold ml-1 hover:underline";
+        btn.type = "button";
+        btn.textContent = "Remove";
+        btn.onclick = () => {
+          state.teachers = state.teachers.filter(x => x.id !== t.id);
+          state.lastResult = null;
+          renderAll();
+        };
+
+        div.appendChild(left);
+        div.appendChild(btn);
+        box.appendChild(div);
+      }
+    }
+
+    // Auto balance utility function (fixes discrepancies)
+    function autoBalanceWorkloads() {
+      const scriptTotal = totalScripts();
+      if (scriptTotal === 0) {
+        showToast("Please enter some script counts first!", "warning");
+        return;
+      }
+      if (state.teachers.length === 0) {
+        showToast("Please enter at least one teacher first!", "warning");
+        return;
+      }
+
+      const totalT = totalStudents();
+      if (totalT === 0) {
+        // Distribute completely evenly
+        const base = Math.floor(scriptTotal / state.teachers.length);
+        let remainder = scriptTotal % state.teachers.length;
+        state.teachers.forEach((t, i) => {
+          t.students = base + (i < remainder ? 1 : 0);
+        });
+      } else {
+        // Adjust workloads proportionally to match
+        let sum = 0;
+        const newTargets = state.teachers.map(t => {
+          const share = (t.students / totalT) * scriptTotal;
+          const val = Math.floor(share);
+          sum += val;
+          return val;
+        });
+
+        let remainder = scriptTotal - sum;
+        // Distribute remainder sequentially to teachers with the largest fractional shares
+        const fractions = state.teachers.map((t, idx) => ({
+          idx,
+          frac: ((t.students / totalT) * scriptTotal) - newTargets[idx]
+        }));
+        fractions.sort((a, b) => b.frac - a.frac);
+
+        for (let i = 0; i < remainder; i++) {
+          newTargets[fractions[i].idx]++;
+        }
+
+        state.teachers.forEach((t, idx) => {
+          t.students = newTargets[idx];
+        });
+      }
+
+      showToast("Proportionally adjusted workloads to perfectly match total scripts!", "success");
+      state.lastResult = null;
+      renderAll();
+    }
+
+    function makeCountInput(g, q) {
+      const inp = document.createElement("input");
+      inp.className = "w-16 px-2 py-1 text-center rounded-lg text-xs font-mono";
+      inp.type = "number";
+      inp.inputMode = "numeric";
+      inp.min = "0";
+      inp.step = "1";
+      inp.autocomplete = "off";
+
+      inp.value = String(getCount(g, q));
+
+      const readLive = () => {
+        const v = inp.value;
+        if (v === "") return 0;
+        const n = Number(v);
+        return Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0;
+      };
+
+      const commit = () => {
+        const v = inp.value.trim();
+        const n = v === "" ? 0 : Number(v);
+        const clean = Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0;
+        inp.value = String(clean);
+        setCount(g, q, clean);
+        updateKPIs();
+        refreshCountsTotalsRow();
+        state.lastResult = null;
+        renderOutput(state.lastResult);
+      };
+
+      inp.addEventListener("input", () => {
+        refreshCountsTotalsRow({ live: { g, q, val: readLive() } });
+        updateKPIs();
+        state.lastResult = null;
+        renderOutput(state.lastResult);
+      });
+      
+      inp.addEventListener("change", commit);
+      inp.addEventListener("blur", commit);
+
+      return inp;
+    }
+
+    function renderCountsTable() {
+      const table = el("countsTable");
+      const groups = state.groups;
+      const questions = state.questions;
+
+      table.innerHTML = "";
+
+      if (groups.length === 0 || questions.length === 0) {
+        const tbody = document.createElement("tbody");
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.className = "p-4 text-xs text-slate-400 italic text-center";
+        td.textContent = "Setup at least 1 group and 1 question to unlock the workload configuration.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        table.appendChild(tbody);
+        return;
+      }
+
+      // Headers construction
+      const thead = document.createElement("thead");
+      const trh = document.createElement("tr");
+      const th0 = document.createElement("th");
+      th0.className = "p-2.5 text-xs text-indigo-300 font-bold border-b border-slate-800 bg-slate-900/40";
+      th0.textContent = "Group \\ Question";
+      trh.appendChild(th0);
+
+      for (const q of questions) {
+        const th = document.createElement("th");
+        th.className = "p-2.5 text-xs text-slate-300 font-bold border-b border-slate-800 bg-slate-900/40 text-center";
+        th.textContent = q;
+        trh.appendChild(th);
+      }
+      const thTot = document.createElement("th");
+      thTot.className = "p-2.5 text-xs text-indigo-300 font-bold border-b border-slate-800 bg-slate-900/40 text-center";
+      thTot.textContent = "Group Total";
+      trh.appendChild(thTot);
+
+      thead.appendChild(trh);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+
+      for (const g of groups) {
+        const tr = document.createElement("tr");
+        tr.dataset.group = g;
+        tr.className = "border-b border-slate-800/60 hover:bg-slate-900/20";
+
+        const tdg = document.createElement("td");
+        tdg.className = "p-2.5 text-xs font-semibold text-slate-200";
+        tdg.innerHTML = `<b>${g}</b>`;
+        tr.appendChild(tdg);
+
+        for (const q of questions) {
+          const td = document.createElement("td");
+          td.className = "p-2.5 text-center";
+          td.dataset.group = g;
+          td.dataset.question = q;
+          td.appendChild(makeCountInput(g, q));
+          tr.appendChild(td);
+        }
+
+        const tdt = document.createElement("td");
+        tdt.className = "p-2.5 text-xs text-center font-mono font-bold text-slate-400";
+        tdt.dataset.role = "groupTotal";
+        tdt.textContent = String((() => {
+          let s = 0; for (const q of questions) s += getCount(g, q); return s;
+        })());
+        tr.appendChild(tdt);
+
+        tbody.appendChild(tr);
+      }
+
+      // Column Sums Row construction
+      const trTot = document.createElement("tr");
+      trTot.className = "bg-slate-900/50 font-bold";
+      trTot.dataset.role = "totalsRow";
+      const tdLab = document.createElement("td");
+      tdLab.className = "p-2.5 text-xs text-slate-300";
+      tdLab.innerHTML = `<b>Total</b>`;
+      trTot.appendChild(tdLab);
+
+      for (const q of questions) {
+        const td = document.createElement("td");
+        td.className = "p-2.5 text-xs text-center font-mono text-slate-300";
+        td.dataset.role = "questionTotal";
+        td.dataset.q = q;
+        td.textContent = String(groups.reduce((sum, g) => sum + getCount(g, q), 0));
+        trTot.appendChild(td);
+      }
+      const tdAll = document.createElement("td");
+      tdAll.className = "p-2.5 text-xs text-center font-mono font-extrabold text-indigo-300 bg-indigo-950/30";
+      tdAll.dataset.role = "grandTotal";
+      tdAll.textContent = String(totalScripts());
+      trTot.appendChild(tdAll);
+
+      tbody.appendChild(trTot);
+      table.appendChild(tbody);
+    }
+
+    function refreshCountsTotalsRow(opts = {}) {
+      const table = el("countsTable");
+      const groups = state.groups;
+      const questions = state.questions;
+      if (!table) return;
+
+      const live = opts.live;
+
+      const valAt = (g, q) => {
+        if (live && live.g === g && live.q === q) return live.val;
+        return getCount(g, q);
+      };
+
+      for (const g of groups) {
+        let s = 0;
+        for (const q of questions) s += valAt(g, q);
+        const row = table.querySelector(`tr[data-group="${CSS.escape(g)}"]`);
+        const cell = row?.querySelector(`td[data-role="groupTotal"]`);
+        if (cell) cell.textContent = String(s);
+      }
+
+      const totalsRow = table.querySelector(`tr[data-role="totalsRow"]`);
+      if (totalsRow) {
+        for (const q of questions) {
+          let s = 0;
+          for (const g of groups) s += valAt(g, q);
+          const cell = totalsRow.querySelector(`td[data-role="questionTotal"][data-q="${CSS.escape(q)}"]`);
+          if (cell) cell.textContent = String(s);
+        }
+        let grand = 0;
+        for (const g of groups) for (const q of questions) grand += valAt(g, q);
+        const grandCell = totalsRow.querySelector(`td[data-role="grandTotal"]`);
+        if (grandCell) grandCell.textContent = String(grand);
+      }
+    }
+
+    function renderWorkloadBars() {
+      const container = el("workloadBarsContainer");
+      if (!container) return;
+      container.innerHTML = "";
+
+      if (state.teachers.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-400 italic">No registered teachers yet.</div>`;
+        return;
+      }
+
+      const result = state.lastResult;
+      const loadMap = {};
+      for (const t of state.teachers) loadMap[t.name] = 0;
+
+      if (result && result.ok && result.alloc) {
+        for (const [k, cnt] of result.alloc.entries()) {
+          const [tName] = k.split("||");
+          if (loadMap[tName] !== undefined) loadMap[tName] += cnt;
+        }
+      }
+
+      state.teachers.forEach(t => {
+        const assigned = loadMap[t.name] || 0;
+        const target = t.students || 0;
+        const percent = target > 0 ? Math.min(100, (assigned / target) * 100) : 0;
+
+        let barColor = "bg-blue-500";
+        let textColor = "text-blue-400";
+        if (assigned === target) {
+          barColor = "bg-emerald-400";
+          textColor = "text-emerald-400";
+        } else if (assigned > target) {
+          barColor = "bg-rose-500";
+          textColor = "text-rose-400";
+        }
+
+        // Count conflicts
+        let ownCount = 0;
+        if (result && result.ok && result.alloc) {
+          for (const [k, cnt] of result.alloc.entries()) {
+            const [tName, g] = k.split("||");
+            if (tName === t.name && t.groups.has(g)) ownCount += cnt;
+          }
+        }
+
+        const barCard = document.createElement("div");
+        barCard.className = "p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col gap-2";
+        barCard.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-200 truncate pr-2">${t.name}</span>
+            <span class="${textColor} font-mono font-bold whitespace-nowrap">${assigned}/${target} allocated</span>
+          </div>
+          <div class="w-full bg-slate-850 rounded-full h-2 overflow-hidden">
+            <div class="${barColor} h-2 transition-all duration-500 rounded-full" style="width: ${percent}%"></div>
+          </div>
+          <div class="flex items-center gap-1.5 text-[10px] mt-0.5">
+            ${ownCount > 0 
+              ? `<span class="text-amber-400 font-semibold flex items-center gap-1">⚠️ matches own group: ${ownCount}</span>` 
+              : `<span class="text-emerald-400 font-medium flex items-center gap-1">✨ no own-group conflicts</span>`
+            }
+          </div>
+        `;
+        container.appendChild(barCard);
+      });
+    }
+
+    // KPI Refresh and Balancer Visual alerts
+    function updateKPIs(result = null) {
+      const scrTot = totalScripts();
+      const studTot = totalStudents();
+
+      el("kTeachers").textContent = String(state.teachers.length);
+      el("kGroups").textContent = String(state.groups.length);
+      el("kQuestions").textContent = String(state.questions.length);
+
+      el("kTotalScripts").textContent = String(scrTot);
+      el("kTotalStudents").textContent = String(studTot);
+
+      const ownAssigned = result?.ownAssigned ?? 0;
+      el("kOwnAssigned").textContent = String(ownAssigned);
+
+      const statusBox = el("status");
+      const balanceMsg = el("balanceMessage");
+      statusBox.innerHTML = "";
+      balanceMsg.classList.add("hidden");
+
+      if (state.groups.length === 0 || state.questions.length === 0) {
+        statusBox.innerHTML = `<span class="text-amber-400 font-bold">⚠️ Warning:</span> Add at least 1 group and 1 question to formulate the network flow model.`;
+        return;
+      }
+      if (state.teachers.length === 0) {
+        statusBox.innerHTML = `<span class="text-amber-400 font-bold">⚠️ Warning:</span> Registered teachers panel is currently empty. Add a teacher above.`;
+        return;
+      }
+      if (scrTot === 0) {
+        statusBox.innerHTML = `<span class="text-amber-400 font-bold">⚠️ Warning:</span> Total script count in configuration matrix is 0. Please specify volumes.`;
+        return;
+      }
+
+      if (studTot !== scrTot) {
+        balanceMsg.classList.remove("hidden");
+        balanceMsg.className = "text-xs p-3 rounded-xl mt-2 bg-rose-950/50 border border-rose-500/20 text-rose-300 flex flex-col gap-2";
+        balanceMsg.innerHTML = `
+          <div class="font-bold flex items-center gap-1">❌ Mismatch Error: Total script volume (${scrTot}) does not match Teacher workloads (${studTot})</div>
+          <p class="text-[10px] text-slate-300 leading-relaxed">The algorithm requires total student load limit to be mathematically equivalent to total exam script inventory to find a clean permutation.</p>
+          <button class="btn btn-secondary text-[11px] py-1.5 px-3 rounded-lg text-indigo-300 font-bold text-left self-start mt-1 hover:bg-slate-900" onclick="autoBalanceWorkloads()">
+            ⚡ Auto-balance workloads proportionally to fit counts
+          </button>
+        `;
+        statusBox.innerHTML = `<span class="text-rose-400 font-bold">⚠️ Out of Balance:</span> Resolve discrepancy before generating flow.`;
+        return;
+      }
+
+      balanceMsg.classList.remove("hidden");
+      balanceMsg.className = "text-xs p-2 rounded-xl mt-2 bg-emerald-950/30 border border-emerald-500/20 text-emerald-300 font-semibold flex items-center gap-2";
+      balanceMsg.innerHTML = `<span>✨</span> Workload total is balanced. Grid ready for formulation.`;
+      
+      statusBox.innerHTML = `<span class="text-emerald-400 font-bold">🚀 System Ready.</span> Click the optimal solver button to run assignment algorithm.`;
+    }
+
+    function renderAll() {
+      refreshSelectors();
+      renderTeachers();
+      renderCountsTable();
+      updateKPIs(state.lastResult);
+      renderWorkloadBars();
+      renderOutput(state.lastResult);
+    }
+
+    class Edge {
+      constructor(to, rev, cap, cost) {
+        this.to = to;
+        this.rev = rev;
+        this.cap = cap;
+        this.initialCap = cap; // Retain original capacity limit to trace exact flow allocations
+        this.cost = cost;
+      }
+    }
+
+    class MinCostMaxFlow {
+      constructor(n) {
+        this.n = n;
+        this.g = Array.from({ length: n }, () => []);
+      }
+      
+      addEdge(fr, to, cap, cost) {
+        const fwd = new Edge(to, this.g[to].length, cap, cost);
+        const rev = new Edge(fr, this.g[fr].length, 0, -cost);
+        this.g[fr].push(fwd);
+        this.g[to].push(rev);
+      }
+      
+      minCostFlow(s, t, maxf) {
+        const n = this.n;
+        const INF = 1e18;
+        let flow = 0, cost = 0;
+        const h = new Array(n).fill(0);
+        const dist = new Array(n);
+        const prevv = new Array(n);
+        const preve = new Array(n);
+
+        while (flow < maxf) {
+          dist.fill(INF);
+          dist[s] = 0;
+          const pq = [[0, s]];
+
+          while (pq.length) {
+            let best = 0;
+            for (let i = 1; i < pq.length; i++) {
+              if (pq[i][0] < pq[best][0]) best = i;
+            }
+            const [d, v] = pq.splice(best, 1)[0];
+            if (dist[v] < d) continue;
+
+            for (let i = 0; i < this.g[v].length; i++) {
+              const e = this.g[v][i];
+              if (e.cap <= 0) continue;
+              const nd = dist[v] + e.cost + h[v] - h[e.to];
+              if (nd < dist[e.to]) {
+                dist[e.to] = nd;
+                prevv[e.to] = v;
+                preve[e.to] = i;
+                pq.push([nd, e.to]);
+              }
+            }
+          }
+
+          if (dist[t] === INF) break;
+          for (let v = 0; v < n; v++) {
+            if (dist[v] < INF) h[v] += dist[v];
+          }
+
+          let d = maxf - flow;
+          for (let v = t; v !== s; v = prevv[v]) {
+            const e = this.g[prevv[v]][preve[v]];
+            d = Math.min(d, e.cap);
+          }
+          flow += d;
+          cost += d * h[t];
+          for (let v = t; v !== s; v = prevv[v]) {
+            const e = this.g[prevv[v]][preve[v]];
+            e.cap -= d;
+            this.g[v][e.rev].cap += d;
+          }
+        }
+        return { flow, cost };
+      }
+    }
+
+    // Optimized Formulation Engine (Solving grouping bottlenecks instead of tokens)
+    function generateDistribution() {
+      const teachers = state.teachers;
+      const groups = state.groups;
+      const questions = state.questions;
+
+      const total = totalScripts();
+      const totalStud = totalStudents();
+
+      if (groups.length === 0 || questions.length === 0 || teachers.length === 0 || total === 0) {
+        return { ok: false, message: "Please specify active teachers, student groups, questions, and script counts first." };
+      }
+      if (totalStud !== total) {
+        return { ok: false, message: `Discrepancy active: total workload target quota (${totalStud}) must be identical to script count (${total}).` };
+      }
+
+      // Compact Formulation Matrix: Aggregate identical group-question pairs instead of duplicating individual scripts as single tokens
+      const activeGQ = [];
+      for (const g of groups) {
+        for (const q of questions) {
+          const c = getCount(g, q);
+          if (c > 0) {
+            activeGQ.push({ g, q, count: c });
+          }
+        }
+      }
+
+      // Vertex Index Mappings
+      const S = 0;
+      const nodeGQStart = 1;
+      const nodeTeacherStart = nodeGQStart + activeGQ.length;
+      const TT = nodeTeacherStart + teachers.length;
+      const N = TT + 1;
+
+      const mcmf = new MinCostMaxFlow(N);
+      const ownPenalty = 1000; // Minimize Own Group Matched Costs
+
+      // Edges configuration
+      for (let i = 0; i < activeGQ.length; i++) {
+        mcmf.addEdge(S, nodeGQStart + i, activeGQ[i].count, 0);
+      }
+
+      for (let i = 0; i < activeGQ.length; i++) {
+        const item = activeGQ[i];
+        for (let j = 0; j < teachers.length; j++) {
+          const t = teachers[j];
+          const cost = t.groups.has(item.g) ? ownPenalty : 0;
+          mcmf.addEdge(nodeGQStart + i, nodeTeacherStart + j, item.count, cost);
+        }
+      }
+
+      for (let j = 0; j < teachers.length; j++) {
+        const cap = Number(teachers[j].students) || 0;
+        mcmf.addEdge(nodeTeacherStart + j, TT, cap, 0);
+      }
+
+      // Solving Flow Optimization
+      const res = mcmf.minCostFlow(S, TT, total);
+      if (res.flow !== total) {
+        return { ok: false, message: "A mathematically correct assignment could not be found with current limits. Please verify allocations." };
+      }
+
+      // Parse assignment output from residual network
+      const alloc = new Map();
+      let ownAssigned = 0;
+
+      for (let i = 0; i < activeGQ.length; i++) {
+        const node = nodeGQStart + i;
+        const item = activeGQ[i];
+
+        for (let ei = 0; ei < mcmf.g[node].length; ei++) {
+          const e = mcmf.g[node][ei];
+          if (e.to >= nodeTeacherStart && e.to < nodeTeacherStart + teachers.length) {
+            const flowSent = e.initialCap - e.cap;
+            if (flowSent > 0) {
+              const teacherIdx = e.to - nodeTeacherStart;
+              const teacher = teachers[teacherIdx];
+              const k = `${teacher.name}||${item.g}||${item.q}`;
+              alloc.set(k, (alloc.get(k) ?? 0) + flowSent);
+              if (teacher.groups.has(item.g)) {
+                ownAssigned += flowSent;
+              }
+            }
+          }
+        }
+      }
+
+      return { 
+        ok: true, 
+        message: `Perfect distribution found! Total scripts matching teachers' own groups minimized to ${ownAssigned} across all sets.`, 
+        alloc, 
+        ownAssigned 
+      };
+    }
+
+    function renderOutput(result) {
+      const out = el("outputTable");
+      const qt = el("questionTotalsTable");
+      const dl1 = el("btnDownloadCSV");
+      const dl2 = el("btnDownloadCSV2");
+
+      out.innerHTML = "";
+      qt.innerHTML = "";
+
+      if (!result || !result.ok) {
+        dl1.disabled = true;
+        dl2.disabled = true;
+
+        const tbody = document.createElement("tbody");
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.className = "p-6 text-xs text-slate-400 italic text-center";
+        td.textContent = "No assignment generated yet. Run the solver above to see calculated distribution matrix.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        out.appendChild(tbody);
+
+        const tbody2 = document.createElement("tbody");
+        const tr2 = document.createElement("tr");
+        const td2 = document.createElement("td");
+        td2.className = "p-4 text-xs text-slate-400 italic text-center";
+        td2.textContent = "—";
+        tr2.appendChild(td2);
+        tbody2.appendChild(tr2);
+        qt.appendChild(tbody2);
+        return;
+      }
+
+      dl1.disabled = false;
+      dl2.disabled = false;
+
+      const teachers = state.teachers;
+      const groups = state.groups;
+      const questions = state.questions;
+
+      const matrix = {};
+      for (const t of teachers) {
+        matrix[t.name] = {};
+        for (const g of groups) {
+          matrix[t.name][g] = {};
+          for (const q of questions) matrix[t.name][g][q] = 0;
+        }
+      }
+
+      for (const [k, cnt] of result.alloc.entries()) {
+        const [tName, g, q] = k.split("||");
+        if (matrix[tName]?.[g]?.[q] !== undefined) matrix[tName][g][q] += cnt;
+      }
+
+      // Output distribution table headers
+      const thead = document.createElement("thead");
+      const trh = document.createElement("tr");
+      const th0 = document.createElement("th");
+      th0.className = "p-3 text-xs font-bold text-indigo-300 border-b border-slate-800 bg-slate-900/40";
+      th0.textContent = "Teacher \\ Group";
+      trh.appendChild(th0);
+
+      for (const g of groups) {
+        const th = document.createElement("th");
+        th.className = "p-3 text-xs font-bold text-slate-300 border-b border-slate-800 bg-slate-900/40 text-center";
+        th.textContent = g;
+        trh.appendChild(th);
+      }
+      const thTot = document.createElement("th");
+      thTot.className = "p-3 text-xs font-bold text-indigo-300 border-b border-slate-800 bg-slate-900/40 text-center";
+      thTot.textContent = "Assigned / Target";
+      trh.appendChild(thTot);
+      thead.appendChild(trh);
+      out.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      const colTotals = {};
+      for (const g of groups) colTotals[g] = 0;
+
+      for (const t of teachers) {
+        const tr = document.createElement("tr");
+        tr.className = "border-b border-slate-800/60 hover:bg-slate-900/10";
+        
+        const tdName = document.createElement("td");
+        tdName.className = "p-3 text-xs";
+        tdName.innerHTML = `
+          <div class="font-bold text-slate-200">${t.name}</div>
+          <div class="text-[10px] text-slate-400 mt-1">Teaches: <span class="font-medium text-slate-300">${[...t.groups].join(", ") || "None"}</span></div>
+        `;
+        tr.appendChild(tdName);
+
+        let rowTotal = 0;
+
+        for (const g of groups) {
+          let lines = [];
+          let cellTotal = 0;
+          for (const q of questions) {
+            const v = matrix[t.name][g][q];
+            if (v > 0) lines.push(`${q}:${v}`);
+            cellTotal += v;
+          }
+          rowTotal += cellTotal;
+          colTotals[g] += cellTotal;
+
+          const td = document.createElement("td");
+          // Highlight own classes matching to alert visual patterns of optimization
+          const isOwnGroup = t.groups.has(g);
+          td.className = `p-3 text-xs text-center font-mono ${cellTotal > 0 ? 'text-slate-200' : 'text-slate-600'} ${isOwnGroup && cellTotal > 0 ? 'bg-amber-950/20 border border-amber-900/30 font-bold text-amber-300' : ''}`;
+          td.innerHTML = lines.length ? lines.join("<br/>") : "-";
+          tr.appendChild(td);
+        }
+
+        const tdRT = document.createElement("td");
+        tdRT.className = "p-3 text-xs text-center font-mono";
+        const isMatched = rowTotal === (t.students || 0);
+        tdRT.innerHTML = `<b class="${isMatched ? 'text-emerald-400' : 'text-slate-300'}">${rowTotal}</b> <span class="text-slate-500 font-normal">/ ${t.students}</span>`;
+        tr.appendChild(tdRT);
+
+        tbody.appendChild(tr);
+      }
+
+      // Grand Column Totals row
+      const trTot = document.createElement("tr");
+      trTot.className = "bg-slate-900/40 font-bold border-t-2 border-slate-800";
+      const tdLab = document.createElement("td");
+      tdLab.className = "p-3 text-xs text-slate-300";
+      tdLab.innerHTML = `<b>Total Assigned</b>`;
+      trTot.appendChild(tdLab);
+
+      let grand = 0;
+      for (const g of groups) {
+        const td = document.createElement("td");
+        td.className = "p-3 text-xs text-center font-mono text-slate-300";
+        td.innerHTML = `<b>${colTotals[g]}</b>`;
+        trTot.appendChild(td);
+        grand += colTotals[g];
+      }
+      const tdGrand = document.createElement("td");
+      tdGrand.className = "p-3 text-xs text-center font-mono font-extrabold text-indigo-300";
+      tdGrand.innerHTML = `<b>${grand}</b>`;
+      trTot.appendChild(tdGrand);
+
+      tbody.appendChild(trTot);
+      out.appendChild(tbody);
+
+      // Question-wise Summary Table construction
+      const qHead = document.createElement("thead");
+      const qTrh = document.createElement("tr");
+      const qTh0 = document.createElement("th");
+      qTh0.className = "p-3 text-xs font-bold text-indigo-300 border-b border-slate-800 bg-slate-900/40";
+      qTh0.textContent = "Question Code";
+      qTrh.appendChild(qTh0);
+
+      for (const t of teachers) {
+        const th = document.createElement("th");
+        th.className = "p-3 text-xs font-bold text-slate-300 border-b border-slate-800 bg-slate-900/40 text-center";
+        th.textContent = t.name;
+        qTrh.appendChild(th);
+      }
+      const thT = document.createElement("th");
+      thT.className = "p-3 text-xs font-bold text-indigo-300 border-b border-slate-800 bg-slate-900/40 text-center";
+      thT.textContent = "Aggregated";
+      qTrh.appendChild(thT);
+
+      qHead.appendChild(qTrh);
+      qt.appendChild(qHead);
+
+      const qBody = document.createElement("tbody");
+
+      for (const q of questions) {
+        const tr = document.createElement("tr");
+        tr.className = "border-b border-slate-800/60 hover:bg-slate-900/10";
+        const tdq = document.createElement("td");
+        tdq.className = "p-3 text-xs font-bold text-slate-200";
+        tdq.innerHTML = `<b>${q}</b>`;
+        tr.appendChild(tdq);
+
+        let rowSum = 0;
+        for (const t of teachers) {
+          let v = 0;
+          for (const g of groups) v += matrix[t.name][g][q];
+          rowSum += v;
+          const td = document.createElement("td");
+          td.className = "p-3 text-xs text-center font-mono text-slate-300";
+          td.textContent = String(v);
+          tr.appendChild(td);
+        }
+        const tdRow = document.createElement("td");
+        tdRow.className = "p-3 text-xs text-center font-mono font-bold text-slate-400 bg-slate-900/20";
+        tdRow.innerHTML = `<b>${rowSum}</b>`;
+        tr.appendChild(tdRow);
+        qBody.appendChild(tr);
+      }
+      qt.appendChild(qBody);
+
+      el("status").innerHTML = `<span class="text-emerald-400 font-bold">✨ Success:</span> ${escapeHtml(result.message)}`;
+      updateKPIs(result);
+      renderWorkloadBars();
+    }
+
+    function escapeHtml(s) {
+      return (s ?? "").toString()
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function csvCell(v) {
+      const s = (v ?? "").toString();
+      if (/[",\n]/.test(s)) return `"${s.replaceAll('"', '""')}"`;
+      return s;
+    }
+
+    function toCSV(result) {
+      const teachers = state.teachers;
+      const groups = state.groups;
+      const questions = state.questions;
+
+      const matrix = {};
+      for (const t of teachers) {
+        matrix[t.name] = {};
+        for (const g of groups) {
+          matrix[t.name][g] = {};
+          for (const q of questions) matrix[t.name][g][q] = 0;
+        }
+      }
+
+      for (const [k, cnt] of result.alloc.entries()) {
+        const [tName, g, q] = k.split("||");
+        if (matrix[tName]?.[g]?.[q] !== undefined) matrix[tName][g][q] += cnt;
+      }
+
+      let csv = [];
+
+      // SECTION 1: Matrix layout (Teacher vs Group)
+      csv.push("--- SECTION 1: SCRIPT DISTRIBUTION MATRIX (Teacher x Group) ---");
+      let headers1 = ["Teacher Name", ...groups, "Total Assigned", "Target Workload", "Teaches Groups"];
+      csv.push(headers1.map(csvCell).join(","));
+
+      for (const t of teachers) {
+        let row = [t.name];
+        let rowTotal = 0;
+        for (const g of groups) {
+          let cellText = [];
+          let cellTotal = 0;
+          for (const q of questions) {
+            const v = matrix[t.name][g][q];
+            if (v > 0) {
+              cellText.push(`${q}:${v}`);
+              cellTotal += v;
+            }
+          }
+          rowTotal += cellTotal;
+          row.push(cellText.length ? cellText.join(" | ") : "-");
+        }
+        row.push(rowTotal);
+        row.push(t.students);
+        row.push([...t.groups].join("; ") || "None");
+        csv.push(row.map(csvCell).join(","));
+      }
+
+      // Col sums section 1
+      let colTotalsRow = ["Total Assigned"];
+      let grandTotal = 0;
+      for (const g of groups) {
+        let gTot = 0;
+        for (const t of teachers) {
+          for (const q of questions) {
+            gTot += matrix[t.name][g][q];
+          }
+        }
+        colTotalsRow.push(gTot);
+        grandTotal += gTot;
+      }
+      colTotalsRow.push(grandTotal);
+      colTotalsRow.push(teachers.reduce((sum, t) => sum + t.students, 0));
+      colTotalsRow.push("");
+      csv.push(colTotalsRow.map(csvCell).join(","));
+
+      csv.push("");
+      csv.push("");
+
+      // SECTION 2: Summary of Question Totals
+      csv.push("--- SECTION 2: QUESTION TOTALS BY TEACHER ---");
+      let headers2 = ["Question Code", ...teachers.map(t => t.name), "Aggregate Count"];
+      csv.push(headers2.map(csvCell).join(","));
+
+      for (const q of questions) {
+        let row = [q];
+        let qTotal = 0;
+        for (const t of teachers) {
+          let tSum = 0;
+          for (const g of groups) {
+            tSum += matrix[t.name][g][q];
+          }
+          row.push(tSum);
+          qTotal += tSum;
+        }
+        row.push(qTotal);
+        csv.push(row.map(csvCell).join(","));
+      }
+
+      // Col sums section 2
+      let qColTotalsRow = ["Total Assigned"];
+      let qGrandTotal = 0;
+      for (const t of teachers) {
+        let tSum = 0;
+        for (const g of groups) {
+          for (const q of questions) {
+            tSum += matrix[t.name][g][q];
+          }
+        }
+        qColTotalsRow.push(tSum);
+        qGrandTotal += tSum;
+      }
+      qColTotalsRow.push(qGrandTotal);
+      csv.push(qColTotalsRow.map(csvCell).join(","));
+
+      csv.push("");
+      csv.push("");
+
+      // SECTION 3: Detailed Flat List Database Format
+      csv.push("--- SECTION 3: DETAILED FLAT ASSIGNMENT LIST ---");
+      csv.push(["Allocated Teacher", "Student Group", "Question Code", "Assigned Count", "Is Own Group?"].map(csvCell).join(","));
+      for (const t of teachers) {
+        for (const g of groups) {
+          for (const q of questions) {
+            const val = matrix[t.name][g][q];
+            if (val > 0) {
+              const isOwn = t.groups.has(g) ? "YES" : "NO";
+              csv.push([t.name, g, q, val, isOwn].map(csvCell).join(","));
+            }
+          }
+        }
+      }
+
+      return csv.join("\n");
+    }
+
+    function downloadCSV() {
+      const result = state.lastResult;
+      if (!result || !result.ok) {
+        showToast("No active data set calculated. Please run solver first.", "warning");
+        return;
+      }
+      
+      const csvContent = toCSV(result);
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `exam_script_distribution_${new Date().toISOString().slice(0, 10)}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("Consolidated CSV report download triggered successfully!", "success");
+    }
+
+    // Presets loaders for immediate functional demonstration
+    function loadDemoPreset(type) {
+      state.lastResult = null;
+      if (type === "school") {
+        state.groups = ["Class-10A", "Class-10B", "Class-10C"];
+        state.questions = ["Q1", "Q2", "Q3", "Q4"];
+        state.teachers = [
+          { id: uid("t"), name: "Mr. Adams (Teaches 10A)", groups: new Set(["Class-10A"]), students: 35 },
+          { id: uid("t"), name: "Ms. Baker (Teaches 10B)", groups: new Set(["Class-10B"]), students: 30 },
+          { id: uid("t"), name: "Dr. Clark (Teaches 10C)", groups: new Set(["Class-10C"]), students: 35 }
+        ];
+        
+        state.counts.clear();
+        // Class 10A script counts
+        setCount("Class-10A", "Q1", 10);
+        setCount("Class-10A", "Q2", 10);
+        setCount("Class-10A", "Q3", 8);
+        setCount("Class-10A", "Q4", 7); // Total 35
+        // Class 10B script counts
+        setCount("Class-10B", "Q1", 8);
+        setCount("Class-10B", "Q2", 8);
+        setCount("Class-10B", "Q3", 7);
+        setCount("Class-10B", "Q4", 7); // Total 30
+        // Class 10C script counts
+        setCount("Class-10C", "Q1", 9);
+        setCount("Class-10C", "Q2", 9);
+        setCount("Class-10C", "Q3", 9);
+        setCount("Class-10C", "Q4", 8); // Total 35
+        
+        showToast("Loaded high school demo preset successfully!", "success");
+      } else if (type === "university") {
+        state.groups = ["Section-A", "Section-B"];
+        state.questions = ["Part-I", "Part-II"];
+        state.teachers = [
+          { id: uid("t"), name: "Prof. Evans (Teaches Sec-A)", groups: new Set(["Section-A"]), students: 40 },
+          { id: uid("t"), name: "Prof. Foster (Teaches Sec-B)", groups: new Set(["Section-B"]), students: 40 }
+        ];
+        
+        state.counts.clear();
+        setCount("Section-A", "Part-I", 20);
+        setCount("Section-A", "Part-II", 20);
+        setCount("Section-B", "Part-I", 20);
+        setCount("Section-B", "Part-II", 20);
+        
+        showToast("Loaded university demo preset successfully!", "success");
+      }
+      
+      // Auto run flow solver to immediately display visuals on sample load
+      const res = generateDistribution();
+      state.lastResult = res;
+      renderAll();
+    }
+
+    // Bind Controls
+    el("btnGenerate").onclick = () => {
+      const result = generateDistribution();
+      state.lastResult = result;
+      if (result.ok) {
+        showToast("Script assignments calculated successfully!", "success");
+      } else {
+        showToast(result.message, "error");
+      }
+      renderOutput(result);
+    };
+
+    el("btnDownloadCSV").onclick = downloadCSV;
+    el("btnDownloadCSV2").onclick = downloadCSV;
+
+    el("btnReset").onclick = () => {
+      state.teachers = [];
+      state.groups = [];
+      state.questions = [];
+      state.counts.clear();
+      state.lastResult = null;
+      showToast("All dashboard panels wiped clean", "info");
+      renderAll();
+    };
+
+    // Load initial high school demonstration layout on launch
+    window.onload = function() {
+      loadDemoPreset("school");
+    };
+  </script>
+</body>
+</html>

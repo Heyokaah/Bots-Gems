@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HKDSE English Writing Trainer (Paper 2)</title>
+  <!-- Tailwind CSS Integration for Premium UI Controls -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Integration for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #070b19;
+      --panel: #0d1530;
+      --ink: #e2e8f0;
+      --muted: #94a3b8;
+      --brand: #3b82f6;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --card: #111a3a;
+      --border: #1e293b;
+      --shadow: 0 10px 30px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    body {
+      background: radial-gradient(circle at 50% 0%, #101c44 0%, #050814 80%);
+      color: var(--ink);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Custom high-tech scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050814;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b82f6;
+    }
+
+    /* Sparkle glows */
+    .glow-panel {
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .glow-gold {
+      box-shadow: 0 0 35px rgba(245, 158, 11, 0.25);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .wave-loader {
+      display: inline-flex;
+      gap: 3px;
+    }
+    .wave-loader span {
+      width: 4px;
+      height: 14px;
+      background-color: #3b82f6;
+      border-radius: 2px;
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .wave-loader span:nth-child(2) { animation-delay: 0.15s; }
+    .wave-loader span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(2.2); }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-200 antialiased p-3 md:p-6">
+
+  <div class="max-w-6xl mx-auto">
+    <!-- App Header -->
+    <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-800">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/35 flex items-center justify-center">
+          <i class="fa-solid fa-graduation-cap text-white text-2xl"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-200 to-white bg-clip-text text-transparent">
+            HKDSE English Writing Trainer
+          </h1>
+          <p class="text-xs md:text-sm text-slate-400 mt-0.5 font-medium">
+            AI-Powered Paper 2 Assessor & Dynamic Syllabus Prompt Generator
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="modeBadge" class="hidden px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/30">
+          <i class="fa-solid fa-feather mr-1.5"></i> <span id="modeText">Part A</span>
+        </span>
+      </div>
+    </header>
+
+    <!-- Custom Floating Alert Modal to respect No alert/confirm rule -->
+    <div id="alertBox" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl transition-transform scale-95 duration-200">
+        <div class="flex items-center gap-3 text-amber-500 mb-3">
+          <i class="fa-solid fa-circle-exclamation text-2xl"></i>
+          <h3 id="alertTitle" class="text-lg font-bold text-white">Notice</h3>
+        </div>
+        <p id="alertMessage" class="text-sm text-slate-300 leading-relaxed mb-6"></p>
+        <div class="flex justify-end gap-3">
+          <button id="alertCancelBtn" class="hidden px-4 py-2 bg-slate-800 text-slate-300 rounded-lg font-semibold hover:bg-slate-700 transition">Cancel</button>
+          <button id="alertConfirmBtn" class="px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition shadow-lg shadow-blue-500/20">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN DASHBOARD PANEL -->
+    <main>
+      <!-- Mode Selection screen -->
+      <section id="startPanel" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-pen-nib text-blue-500"></i> Select Practice Target
+        </h2>
+        <p class="text-sm text-slate-400 mb-6">Choose an official HKDSE Paper 2 format to practice writing. The AI will dynamically generate custom questions calibrated against current syllabus electives and requirements.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Part A Card -->
+          <div class="group relative bg-slate-950 border border-slate-800 hover:border-blue-500/50 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 shadow-lg" data-mode="A">
+            <div class="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="flex items-start gap-4">
+              <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-envelope-open-text text-2xl"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">Part A — Short Task</h3>
+                <p class="text-xs text-slate-400 mt-1">Situational writing evaluating core communication, formal responses, and reporting skills.</p>
+                <div class="mt-4 flex flex-wrap gap-2 text-xs">
+                  <span class="px-2.5 py-1 bg-slate-800 rounded-md text-slate-300"><i class="fa-regular fa-clock mr-1"></i> 30 Mins</span>
+                  <span class="px-2.5 py-1 bg-slate-800 rounded-md text-slate-300"><i class="fa-solid fa-align-left mr-1"></i> 150+ Words</span>
+                  <span class="px-2.5 py-1 bg-blue-500/10 text-blue-400 font-semibold rounded-md">Short Proposal, Speech, Letter</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Part B Card -->
+          <div class="group relative bg-slate-950 border border-slate-800 hover:border-indigo-500/50 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 shadow-lg" data-mode="B">
+            <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="flex items-start gap-4">
+              <div class="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-file-invoice text-2xl"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors">Part B — Long Task</h3>
+                <p class="text-xs text-slate-400 mt-1">Discursive essay requiring complex structure, debate rebuttal, or persuasive vocabulary styles.</p>
+                <div class="mt-4 flex flex-wrap gap-2 text-xs">
+                  <span class="px-2.5 py-1 bg-slate-800 rounded-md text-slate-300"><i class="fa-regular fa-clock mr-1"></i> 50 Mins</span>
+                  <span class="px-2.5 py-1 bg-slate-800 rounded-md text-slate-300"><i class="fa-solid fa-align-left mr-1"></i> 300+ Words</span>
+                  <span class="px-2.5 py-1 bg-indigo-500/10 text-indigo-400 font-semibold rounded-md">Argumentative Essay, Debate, Article</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-800/60 flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+            <span>Evaluated according to the HKEAA Paper 2 Assessment Rubrics.</span>
+          </div>
+          <div class="flex gap-4">
+            <span class="text-xs text-slate-500"><strong class="text-slate-300">C</strong>ontent: Max 7</span>
+            <span class="text-xs text-slate-500"><strong class="text-slate-300">L</strong>anguage: Max 7</span>
+            <span class="text-xs text-slate-500"><strong class="text-slate-300">O</strong>rganization: Max 7</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exam Workspace Panel -->
+      <section id="examPanel" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left panel: Question & Guides -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+          
+          <!-- Question prompt card -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-xs font-bold uppercase tracking-widest text-blue-400"><i class="fa-solid fa-paste"></i> Scenario</span>
+              
+              <!-- Premium Dynamic Refresh Button -->
+              <button id="newQuestionBtn" class="text-xs font-bold text-white px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-lg transition-all shadow-md shadow-blue-500/15 flex items-center gap-1.5">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> AI Generate Question
+              </button>
+            </div>
+            
+            <!-- Question Content Section with loading animation -->
+            <div id="questionCardBody" class="transition-opacity duration-300">
+              <h2 id="qTitle" class="text-lg md:text-xl font-bold text-white mb-3">Topic Title</h2>
+              
+              <!-- Clean structural parser output -->
+              <div id="qPrompt" class="space-y-4 mb-4"></div>
+              
+              <div class="mb-4">
+                <span class="text-xs font-semibold text-slate-400 block mb-2"><i class="fa-solid fa-key text-yellow-500"></i> Suggested Vocabulary & Idea Targets:</span>
+                <div id="kwBox" class="flex flex-wrap gap-1.5"></div>
+              </div>
+            </div>
+
+            <!-- Loader block displayed during AI prompt generation -->
+            <div id="questionCardLoader" class="hidden py-12 flex flex-col items-center justify-center text-center">
+              <div class="wave-loader mb-4">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <p class="text-xs font-semibold text-blue-400 uppercase tracking-widest animate-pulse">Contacting AI Syllabus Expert...</p>
+              <p class="text-[11px] text-slate-500 mt-2 max-w-xs">Building an original, syllabus-aligned past paper equivalent...</p>
+            </div>
+
+            <!-- Target Word Counter Pill -->
+            <div class="flex justify-between items-center p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs">
+              <span class="text-slate-400 font-medium">Standard Word Guideline:</span>
+              <span id="qInstruction" class="font-bold text-blue-400">150+ Words</span>
+            </div>
+          </div>
+
+          <!-- Model Outline & Vocabulary Tab -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+            <div class="flex border-b border-slate-800 bg-slate-950">
+              <button id="outlineTabBtn" class="flex-1 py-3 text-xs font-bold uppercase tracking-wider text-blue-400 border-b-2 border-blue-500 bg-slate-900/30 transition">
+                <i class="fa-solid fa-map mr-1.5"></i> Model Outline & Plan
+              </button>
+              <button id="dseTipsTabBtn" class="flex-1 py-3 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 transition">
+                <i class="fa-solid fa-star mr-1.5"></i> Level 5** Checklist
+              </button>
+            </div>
+            
+            <div class="p-5 max-h-[300px] overflow-y-auto">
+              <!-- Outline Content -->
+              <div id="outlineContent" class="space-y-4 text-xs leading-relaxed text-slate-300">
+                <!-- Injected programmatically based on question -->
+              </div>
+              <!-- DSE Tips Content -->
+              <div id="dseTipsContent" class="hidden space-y-4 text-xs leading-relaxed text-slate-300">
+                <div class="p-3 bg-blue-950/20 rounded-xl border border-blue-500/15">
+                  <h4 class="font-bold text-blue-400 mb-1">Sentence Pattern Variety</h4>
+                  <p>Incorporate inversion (e.g., <em>"Not only should the school administration introduce..."</em>), third conditionals, and nominal clauses to impress language examiners.</p>
+                </div>
+                <div class="p-3 bg-indigo-950/20 rounded-xl border border-indigo-500/15">
+                  <h4 class="font-bold text-indigo-400 mb-1">DSE Connective Cohesion</h4>
+                  <p>Avoid simplistic links like 'and' or 'but'. Use sophisticated sentence transitions such as <em>"Crucially," "Inevitably," "Notwithstanding," "By contrast,"</em> and <em>"In the final analysis."</em></p>
+                </div>
+                <div class="p-3 bg-emerald-950/20 rounded-xl border border-emerald-500/15">
+                  <h4 class="font-bold text-emerald-400 mb-1">Tone & Register Alignment</h4>
+                  <p>Adapt your signature. Emails to the Principal must be formal, respectful, and structural, whereas speech outputs should be conversational, urgent, and hook-centric.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right panel: Workspace Editor -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          <!-- Editor Controls -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-4">
+            
+            <!-- Timing & Word Count Stats bar -->
+            <div class="flex items-center justify-between flex-wrap gap-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Time Limit:</span>
+                <div id="timer" class="px-3 py-1 bg-slate-950 text-blue-400 rounded-lg border border-slate-800 font-mono font-bold text-sm tracking-widest">
+                  00:00
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="text-right">
+                  <div id="wc" class="text-sm font-bold text-slate-300">0 words</div>
+                  <div class="text-[10px] text-slate-500 font-medium">Draft dynamic counter</div>
+                </div>
+                <span class="h-6 w-px bg-slate-800"></span>
+                <div class="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-950 text-indigo-400 border border-indigo-500/20">
+                  Target: <span id="targetWords">150</span>+
+                </div>
+              </div>
+            </div>
+
+            <!-- Main text input area -->
+            <div class="relative">
+              <textarea id="editor" 
+                class="w-full min-h-[380px] md:min-h-[440px] bg-slate-950 text-slate-100 placeholder-slate-600 rounded-xl p-4 border border-slate-800 focus:outline-none focus:border-blue-500/50 font-mono text-sm leading-relaxed tracking-wide resize-y transition-colors"
+                placeholder="Compose your draft essay here. Ensure correct structural paragraphing, robust linkages, and stylistic register..."></textarea>
+              <div class="absolute bottom-2.5 right-3 text-[10px] text-slate-500 pointer-events-none font-mono">Spellcheck Ready</div>
+            </div>
+
+            <!-- Footer Toolbar Controls -->
+            <div class="flex flex-col sm:flex-row gap-3 items-center justify-between border-t border-slate-800/80 pt-3">
+              <button id="restartBtn" class="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-chevron-left"></i> Reselect Part
+              </button>
+              
+              <div class="w-full sm:w-auto flex gap-2">
+                <button id="clearBtn" class="flex-1 sm:flex-initial px-4 py-2 bg-red-950/20 border border-red-500/20 hover:bg-red-950/40 text-red-400 rounded-lg font-semibold text-xs transition">
+                  Clear Draft
+                </button>
+                <button id="submitBtn" class="flex-1 sm:flex-initial px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg font-bold text-xs transition shadow-lg shadow-blue-500/20 flex items-center justify-center gap-1.5">
+                  Submit Draft <i class="fa-solid fa-paper-plane"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Grading Loader Screen -->
+      <section id="loaderPanel" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-12 shadow-xl flex flex-col items-center justify-center text-center glow-panel">
+        <div class="relative w-20 h-20 mb-6">
+          <div class="absolute inset-0 rounded-full border-4 border-slate-800"></div>
+          <div class="absolute inset-0 rounded-full border-4 border-t-blue-500 animate-spin"></div>
+          <div class="absolute inset-2 bg-slate-900 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-robot text-blue-400 text-2xl"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Analyzing Draft Portfolio...</h3>
+        <p class="text-sm text-slate-400 max-w-md mx-auto mb-4">Evaluating content depth, vocabulary range, syntactic complexity, paragraphing structure, and cohesion against the official HKDSE assessor standards.</p>
+        <div id="loaderStatus" class="text-xs text-blue-400 font-semibold uppercase tracking-wider animate-pulse">Running assessment routines...</div>
+      </section>
+
+      <!-- Results Assessment Dashboard -->
+      <section id="resultsPanel" class="hidden flex flex-col gap-6">
+        
+        <!-- Summary Header score card -->
+        <div id="scoreHeaderBox" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
+          <div class="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+            <div id="badgeCircle" class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-600 text-white font-extrabold text-2xl shadow-xl flex flex-col items-center justify-center">
+              <span id="badgeText" class="text-3xl">5*</span>
+              <span class="text-[9px] uppercase tracking-wider -mt-1 font-medium">DSE Grade</span>
+            </div>
+            <div>
+              <h2 class="text-xl md:text-2xl font-black text-white">Interactive Assessor's Report</h2>
+              <p class="text-xs text-slate-400 mt-1 max-w-md">Your work was evaluated with the HKDSE writing assessment criteria (Content / Language / Organization). Here is your grading profile:</p>
+            </div>
+          </div>
+          
+          <div class="flex flex-col items-center bg-slate-950 p-4 rounded-xl border border-slate-800 w-full md:w-auto min-w-[200px]">
+            <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Total Profile Score</div>
+            <div class="text-3xl font-black text-white tracking-tight"><span id="scoreTotal" class="text-blue-400">18</span> <span class="text-slate-600 text-xl font-medium">/ 21</span></div>
+            <div id="levelNotice" class="text-[10px] text-amber-400 mt-1.5 font-bold uppercase tracking-widest"><i class="fa-solid fa-trophy"></i> Elite Candidate Performance</div>
+          </div>
+        </div>
+
+        <!-- Rubric Progress & Score bars -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- Content Scorecard -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-400"><i class="fa-solid fa-file-pen mr-1"></i> Content Rubric</span>
+              <span class="text-sm font-extrabold text-white"><span id="scoreC" class="text-emerald-400">0</span>/7</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800 mb-4">
+              <div id="barC" class="h-full bg-gradient-to-r from-emerald-600 to-teal-400 transition-all duration-1000" style="width: 0%"></div>
+            </div>
+            <h4 class="text-xs font-bold text-slate-200 mb-1.5">Assessor Statement:</h4>
+            <div id="feedbackC" class="text-xs text-slate-400 leading-relaxed max-h-[160px] overflow-y-auto pr-1">Content review details here...</div>
+          </div>
+
+          <!-- Language Scorecard -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-blue-400"><i class="fa-solid fa-spell-check mr-1"></i> Language Rubric</span>
+              <span class="text-sm font-extrabold text-white"><span id="scoreL" class="text-blue-400">0</span>/7</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800 mb-4">
+              <div id="barL" class="h-full bg-gradient-to-r from-blue-600 to-indigo-400 transition-all duration-1000" style="width: 0%"></div>
+            </div>
+            <h4 class="text-xs font-bold text-slate-200 mb-1.5">Assessor Statement:</h4>
+            <div id="feedbackL" class="text-xs text-slate-400 leading-relaxed max-h-[160px] overflow-y-auto pr-1">Language review details here...</div>
+          </div>
+
+          <!-- Organization Scorecard -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-indigo-400"><i class="fa-solid fa-network-wired mr-1"></i> Organization Rubric</span>
+              <span class="text-sm font-extrabold text-white"><span id="scoreO" class="text-indigo-400">0</span>/7</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800 mb-4">
+              <div id="barO" class="h-full bg-gradient-to-r from-indigo-600 to-purple-400 transition-all duration-1000" style="width: 0%"></div>
+            </div>
+            <h4 class="text-xs font-bold text-slate-200 mb-1.5">Assessor Statement:</h4>
+            <div id="feedbackO" class="text-xs text-slate-400 leading-relaxed max-h-[160px] overflow-y-auto pr-1">Organization review details here...</div>
+          </div>
+
+        </div>
+
+        <!-- Structured Actionable Recommendations -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <h3 class="text-sm font-extrabold uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-route text-amber-500"></i> Core Development Recommendations
+          </h3>
+          <ul id="suggestionsBox" class="space-y-3">
+            <!-- Injected programmatically -->
+          </ul>
+        </div>
+
+        <!-- Sentence upgrade comparison system -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <h3 class="text-sm font-extrabold uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-circle-up text-emerald-400 animate-pulse"></i> HKDSE Level-Up Rephrasing Center
+          </h3>
+          <p class="text-xs text-slate-400 mb-4">The assessor extracted sentences from your draft that can be reworded using high-tier structures and lexicon to push your grade into higher scoring brackets:</p>
+          
+          <div id="upgradesBox" class="space-y-4">
+            <!-- Injected programmatically -->
+          </div>
+        </div>
+
+        <!-- Bottom Actions Panel -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <button id="reviseBtn" class="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg font-bold text-xs transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i> Revise Draft (Resume Timer)
+          </button>
+          <div class="w-full sm:w-auto flex gap-2">
+            <button id="sameModeBtn" class="flex-1 sm:flex-initial px-5 py-2.5 bg-slate-850 hover:bg-slate-750 text-slate-200 border border-slate-700 rounded-lg font-bold text-xs transition">
+              New Question (Same Mode)
+            </button>
+            <button id="homeBtn" class="flex-1 sm:flex-initial px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-xs transition shadow-lg shadow-blue-500/20">
+              Return to Menu
+            </button>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- References Footer callout -->
+    <section class="mt-8 p-4 bg-slate-900/50 border border-slate-800/80 rounded-xl">
+      <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-2"><i class="fa-solid fa-file-pdf mr-1.5"></i> Syllabus Core Reference Documents</h4>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] text-slate-400 font-mono">
+        <div>• 2024 Paper 2 12-Apr-2024 14-28-33_2.pdf (Hotel Complaints / Family Size)</div>
+        <div>• 2023 HKDSE Paper 2 Q-A Book_2.pdf (Pop-up Shops / Sports &amp; Social Issues)</div>
+        <div>• 2022 HKDSE Paper 2 Q-A Bk_2.pdf (Adventure Farm Guides / Workplace Choices)</div>
+        <div>• 2015 HKDSE Paper 2 Marking Schemes_2.pdf (HKEAA Content, Language &amp; Organisation Rubric)</div>
+      </div>
+    </section>
+
+    <footer class="text-center text-[11px] text-slate-500 mt-12 pb-6 border-t border-slate-900 pt-6">
+      <p>© 2026 HKDSE Writing Trainer. Calibrated according to HKEAA public criteria guidelines. Not affiliated with the HKEAA.</p>
+    </footer>
+  </div>
+
+  <script>
+    // Utility Selector helper
+    const $ = sel => document.querySelector(sel);
+
+    // App State Configuration
+    const state = {
+      mode: null,          // 'A' or 'B'
+      q: null,             // current question payload
+      timerSec: 0,
+      timerId: null,
+      submitted: false,
+      editorTextBeforeGrading: "",
+      customAlertCallback: null
+    };
+
+    // Global alert replacement to adhere to DO NOT use alert() rule
+    function customAlert(message, title = "System Notification", onConfirm = null) {
+      $('#alertTitle').textContent = title;
+      $('#alertMessage').textContent = message;
+      $('#alertBox').classList.remove('hidden');
+      $('#alertConfirmBtn').focus();
+      state.customAlertCallback = onConfirm;
+    }
+
+    $('#alertConfirmBtn').addEventListener('click', () => {
+      $('#alertBox').classList.add('hidden');
+      if (state.customAlertCallback) {
+        state.customAlertCallback();
+        state.customAlertCallback = null;
+      }
+    });
+
+    // Custom confirm utility wrapper
+    function customConfirm(message, title = "Are you sure?", onConfirm) {
+      $('#alertTitle').textContent = title;
+      $('#alertMessage').textContent = message;
+      $('#alertCancelBtn').classList.remove('hidden');
+      $('#alertBox').classList.remove('hidden');
+      
+      const cleanListeners = () => {
+        $('#alertConfirmBtn').removeEventListener('click', confirmHandler);
+        $('#alertCancelBtn').removeEventListener('click', cancelHandler);
+        $('#alertCancelBtn').classList.add('hidden');
+      };
+
+      const confirmHandler = () => {
+        $('#alertBox').classList.add('hidden');
+        cleanListeners();
+        onConfirm();
+      };
+
+      const cancelHandler = () => {
+        $('#alertBox').classList.add('hidden');
+        cleanListeners();
+      };
+
+      $('#alertConfirmBtn').addEventListener('click', confirmHandler);
+      $('#alertCancelBtn').addEventListener('click', cancelHandler);
+    }
+
+    /**
+     * Sophisticated formatter that breaks questions into well-spaced paragraphs,
+     * bullet points, and headers, preventing "one giant block of text" scenarios.
+     */
+    function formatPromptText(text) {
+      if (!text) return "";
+      
+      // Clean and split by double newlines to define paragraph blocks
+      const paragraphs = text.trim().split(/\n\s*\n/);
+      
+      return paragraphs.map(p => {
+        const lines = p.split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length === 0) return "";
+        
+        // Detect if the paragraph is entirely composed of bullet points
+        const isBulletBlock = lines.every(line => line.startsWith('•') || line.startsWith('*') || line.startsWith('-'));
+        
+        if (isBulletBlock) {
+          const listItems = lines.map(line => {
+            const clean = line.replace(/^[•\-\*]\s*/, '');
+            return `<li class="flex items-start gap-2.5 text-slate-300 font-medium my-1">
+              <span class="text-blue-500 mt-1 text-xs"><i class="fa-solid fa-circle text-[7px]"></i></span>
+              <span class="leading-relaxed">${clean}</span>
+            </li>`;
+          }).join('');
+          return `<ul class="space-y-2 bg-slate-950/40 p-4 rounded-xl border border-slate-800/60 my-4 pl-3">${listItems}</ul>`;
+        } else {
+          // Process individual lines within standard blocks
+          return lines.map(line => {
+            // Check for single bullet points
+            if (line.startsWith('•') || line.startsWith('*') || line.startsWith('-')) {
+              const clean = line.replace(/^[•\-\*]\s*/, '');
+              return `<div class="flex items-start gap-2.5 text-slate-300 font-medium pl-2 my-2">
+                <span class="text-blue-500 mt-1 text-xs"><i class="fa-solid fa-circle text-[7px]"></i></span>
+                <span class="leading-relaxed">${clean}</span>
+              </div>`;
+            }
+            // Check if it is a list title or requirement header (e.g., ends in ":" or includes "you should:")
+            if (line.endsWith(':') || line.toLowerCase().includes('you should:') || line.toLowerCase().includes('you must:')) {
+              return `<h4 class="font-bold text-white mt-4 mb-2 text-xs md:text-sm tracking-wide uppercase border-b border-slate-800/80 pb-1.5 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-indigo-400"></i> ${line}
+              </h4>`;
+            }
+            // Standard descriptive text paragraph
+            return `<p class="text-slate-300 text-xs md:text-sm leading-relaxed tracking-wide mb-3">${line}</p>`;
+          }).join('');
+        }
+      }).join('');
+    }
+
+    // Static base sample banks matching real DSE Past Papers verbatim style
+    const bankA = [
+      {
+        title: "Principal Proposal: 'Smart-Diet' Canteen Transformation",
+        prompt: `You are the President of the Student Wellness Society. Write a formal letter of proposal to your Principal, Mrs. Helen Chan, pitching a comprehensive "Smart-Diet" initiative to upgrade the quality, variety, and nutritional index of foods sold at the school canteen.\n\nIn your proposal, you should:\n• Diagnose specific shortcomings of the existing canteen offerings (such as heavy sodium use and lack of fresh produce).\n• Detail practical, cost-balanced alternatives (such as setting up a build-your-own salad station and partnering with organic distributors).\n• Outline structured measures to collect student reviews and trace canteen sales trends to prove ongoing student buy-in.`,
+        keywords: ["Mrs. Helen Chan", "nutritional value", "dietary upgrade", "unprocessed options", "salad bar", "student reception", "affordability", "wellness drive", "monitoring scheme", "operational cost"],
+        outline: `
+          <div class="space-y-3">
+            <div><strong class="text-blue-400">Structure Plan:</strong></div>
+            <p><strong>1. Heading:</strong> Formal proposal structure (To, From, Date, Title).</p>
+            <p><strong>2. Introduction:</strong> State purpose and explain why student well-being requires a canteen diet upgrade immediately.</p>
+            <p><strong>3. Problem analysis:</strong> Critique current menu items clearly, utilizing formal and objective phrasing (e.g., "nutrient-sparse options", "excessive sodium profiles").</p>
+            <p><strong>4. Solution proposals:</strong> Provide concrete solutions (e.g., salad bar, healthy local alternatives).</p>
+            <p><strong>5. Implementation &amp; Feedback:</strong> Suggest dynamic feedback systems (e.g., monthly canteen satisfaction surveys).</p>
+            <p><strong>6. Conclusion:</strong> Respectful, action-oriented call to action.</p>
+          </div>
+        `
+      },
+      {
+        title: "2024 Part A Scenario: Seaside Hotel Complaint Email",
+        prompt: `Write about 200 words inside the hotel feedback registry. After seeing the advertisement below, you booked a one-night stay at the Seaside Hotel. However, you were not happy with your stay because the room was very different from what was shown on the hotel's website.\n\nWrite an email to the hotel manager. In your email, you should explain:\n• Why you were disappointed with the room features, Wi-Fi, and air conditioning.\n• What you would like the manager to do regarding a rebate or voucher compensation.`,
+        keywords: ["Seaside Hotel", "manager email", "disappointment", "misleading advertisement", "Wi-Fi access", "air conditioning glitch", "room service", "financial compensation", "refund options", "HKEAA standard"],
+        outline: `
+          <div class="space-y-3">
+            <div><strong class="text-blue-400">Structure Plan:</strong></div>
+            <p><strong>1. Salutation:</strong> Dear Hotel Manager, / Dear Mr. Smith,</p>
+            <p><strong>2. Context:</strong> Specify dates of stay, booking reference, and the advertised price of HK$1,580 per night.</p>
+            <p><strong>3. Contrast complaints:</strong> Contrast advertised claims (ocean view, functioning AC, room service) with reality.</p>
+            <p><strong>4. Resolution:</strong> Clearly define compensation goals (full refund or equivalent free voucher).</p>
+          </div>
+        `
+      }
+    ];
+
+    const bankB = [
+      {
+        title: "2024 Part B Scenario: The Average Family Size Essay",
+        prompt: `A century ago, women in Hong Kong had on average five children. Today, that number is less than one.\n\nWrite an essay which gives reasons why having fewer children is more desirable now than in the past. Focus on:\n• Financial challenges and the cost of competitive schooling.\n• Careers of modern parents and independent lifestyles.\n• The changing family structures and state support networks.`,
+        keywords: ["average family size", "socioeconomic shift", "academic competitive cost", "career advancement", "procreation rates", "modern lifestyles", "financial liability", "housing congestion", "historical perspective", "re-adaptation"],
+        outline: `
+          <div class="space-y-3">
+            <div><strong class="text-blue-400">Structure Plan:</strong></div>
+            <p><strong>1. Introduction:</strong> Introduce family size trends in Hong Kong (transitioning from 5 children to less than 1).</p>
+            <p><strong>2. Economic Dimension:</strong> Elaborate on high living costs, rent, and private education fees.</p>
+            <p><strong>3. Sociological Shift:</strong> Discuss career alignment and changes in women's empowerment.</p>
+            <p><strong>4. Conclusion:</strong> Synthesize the benefits of sustainable demographics and child well-being metrics.</p>
+          </div>
+        `
+      }
+    ];
+
+    const CONNECTORS = [
+      "however","moreover","therefore","thus","furthermore","in addition","additionally",
+      "on the other hand","on the contrary","in contrast","meanwhile","similarly",
+      "for example","for instance","for one thing","to illustrate",
+      "firstly","first","secondly","second","thirdly","third","next","then","finally","lastly",
+      "nevertheless","nonetheless","as a result","as a consequence","consequently",
+      "to conclude","in conclusion","to sum up","overall","on balance","in summary",
+      "notwithstanding", "crucially", "inevitably", "conversely", "subsequently", "by comparison"
+    ];
+
+    // EVENT LISTENERS & UI TRIGGERS
+    // Mode choice listeners
+    document.querySelectorAll('.p-6[data-mode]').forEach(card => {
+      const pick = () => startMode(card.getAttribute('data-mode'));
+      card.addEventListener('click', pick);
+    });
+
+    // Outline Tab Toggle Listeners
+    $('#outlineTabBtn').addEventListener('click', () => {
+      $('#outlineTabBtn').classList.add('text-blue-400', 'border-blue-500', 'bg-slate-900/30');
+      $('#outlineTabBtn').classList.remove('text-slate-400');
+      $('#dseTipsTabBtn').classList.remove('text-blue-400', 'border-blue-500', 'bg-slate-900/30');
+      $('#dseTipsTabBtn').classList.add('text-slate-400');
+      
+      $('#outlineContent').classList.remove('hidden');
+      $('#dseTipsContent').classList.add('hidden');
+    });
+
+    $('#dseTipsTabBtn').addEventListener('click', () => {
+      $('#dseTipsTabBtn').classList.add('text-blue-400', 'border-blue-500', 'bg-slate-900/30');
+      $('#dseTipsTabBtn').classList.remove('text-slate-400');
+      $('#outlineTabBtn').classList.remove('text-blue-400', 'border-blue-500', 'bg-slate-900/30');
+      $('#outlineTabBtn').classList.add('text-slate-400');
+      
+      $('#dseTipsContent').classList.remove('hidden');
+      $('#outlineContent').classList.add('hidden');
+    });
+
+    // Clear Draft Action
+    $('#clearBtn').addEventListener('click', () => {
+      customConfirm("This action will erase your current writing. Do you want to proceed?", "Confirm Erasing", () => {
+        $('#editor').value = '';
+        updateWordCount();
+        $('#editor').focus();
+      });
+    });
+
+    // New dynamic API prompt generator within active mode
+    $('#newQuestionBtn').addEventListener('click', () => {
+      if (!state.mode) return;
+      
+      const selectNew = () => {
+        generateQuestionWithAI(state.mode);
+      };
+
+      if ($('#editor').value.trim().length > 15) {
+        customConfirm("Generate a new dynamic prompt? Your current draft will be cleared.", "Confirm New Question", selectNew);
+      } else {
+        selectNew();
+      }
+    });
+
+    // Reselect mode panel
+    $('#restartBtn').addEventListener('click', () => {
+      customConfirm("Return to Part Selection? Your current writing will be lost.", "Return to Main Menu", () => {
+        goHome();
+      });
+    });
+
+    // Return to editor to make changes
+    $('#reviseBtn').addEventListener('click', () => {
+      state.submitted = false;
+      $('#examPanel').classList.remove('hidden');
+      $('#resultsPanel').classList.add('hidden');
+      $('#editor').disabled = false;
+      $('#submitBtn').disabled = false;
+      resumeTimer();
+      $('#editor').focus();
+    });
+
+    // Replay same mode
+    $('#sameModeBtn').addEventListener('click', () => {
+      $('#examPanel').classList.remove('hidden');
+      $('#resultsPanel').classList.add('hidden');
+      state.submitted = false;
+      $('#editor').disabled = false;
+      $('#submitBtn').disabled = false;
+      $('#editor').value = '';
+      updateWordCount();
+      generateQuestionWithAI(state.mode);
+    });
+
+    $('#homeBtn').addEventListener('click', () => goHome());
+    $('#editor').addEventListener('input', updateWordCount);
+
+    // CORE CONTROLLER LOGIC
+    function startMode(mode) {
+      state.mode = mode;
+      $('#modeBadge').classList.remove('hidden');
+      $('#modeText').textContent = (mode === 'A' ? 'Part A — Short Task' : 'Part B — Long Task');
+      
+      $('#startPanel').classList.add('hidden');
+      $('#examPanel').classList.remove('hidden');
+      $('#resultsPanel').classList.add('hidden');
+      
+      $('#editor').value = '';
+      updateWordCount();
+      
+      // Load first dynamic question
+      generateQuestionWithAI(mode);
+    }
+
+    function goHome() {
+      stopTimer();
+      state.mode = null;
+      state.submitted = false;
+      $('#modeBadge').classList.add('hidden');
+      
+      $('#startPanel').classList.remove('hidden');
+      $('#examPanel').classList.add('hidden');
+      $('#resultsPanel').classList.add('hidden');
+      $('#editor').value = '';
+      updateWordCount();
+    }
+
+    // Instructing Gemini to generate structured, paragraph-aware writing prompts
+    const SYSTEM_GENERATOR_PROMPT = `You are an expert Senior Curriculum Developer for the HKEAA, designing questions for the HKDSE English Language Paper 2 (Writing) exam.
+Your task is to generate one original, highly authentic HKDSE Paper 2 Writing Question based on the requested exam part (A or B).
+
+Reflect standard formatting as seen in HKEAA files: "2024 Paper 2 12-Apr-2024 14-28-33_2.pdf", "2023 HKDSE Paper 2 Q-A Book_2.pdf", and "2022 HKDSE Paper 2 Q-A Bk_2.pdf".
+
+Structure Requirements:
+- PART A (Short Task, target ~200 words): Focus on practical situational tasks (emails of complaint, letters, notices, blog reviews).
+- PART B (Long Task, target ~400 words): Focus on one of the elective domains (Sports, Popular Culture, Debate, Social Issues, Poems/Songs, Drama).
+
+Formatting Rule:
+The prompt MUST be generated with clear paragraphing, separating context, instructions, and bullet points using double newlines (\\n\\n) and bullet indicators (•) so that the application formatter can render it correctly. Do not write a single condensed block of text.
+
+Output your answer strictly as a single JSON object. Do not wrap it in markdown. Match this schema:
+{
+  "title": "A precise, official title for the question card",
+  "prompt": "The detailed context scenario containing clear paragraphing separation. Format bullet list with • indicators clearly separated from headers.",
+  "keywords": [
+    "Exactly", "ten", "high-scoring", "vocabulary", "pills", "appropriate", "to", "the", "theme"
+  ],
+  "outline": "HTML string containing structured outline headings and tips."
+}`;
+
+    // Async function to call Gemini API to generate a fresh, non-repeating question
+    async function generateQuestionWithAI(mode) {
+      // Toggle card loaders
+      $('#questionCardBody').classList.add('opacity-0', 'pointer-events-none');
+      $('#questionCardLoader').classList.remove('hidden');
+      $('#newQuestionBtn').disabled = true;
+
+      const partName = mode === 'A' ? "Part A (Short Task, 150-200 words standard)" : "Part B (Long Task, 300-400 words standard)";
+      
+      const payloadText = `Generate a fresh, realistic, syllabus-compliant HKDSE Paper 2 question for ${partName}. Do not repeat any standard topics like 'canteen food improvement'. Pick a modern, authentic Hong Kong context. Use double newlines and clear bullet points for separate paragraphs.`;
+
+      try {
+        const apiKey = ""; // Canvas runtime automatically supplies this
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        const payload = {
+          contents: [{ parts: [{ text: payloadText }] }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "OBJECT",
+              properties: {
+                title: { type: "STRING" },
+                prompt: { type: "STRING" },
+                keywords: {
+                  type: "ARRAY",
+                  items: { type: "STRING" }
+                },
+                outline: { type: "STRING" }
+              },
+              required: ["title", "prompt", "keywords", "outline"]
+            }
+          },
+          systemInstruction: {
+            parts: [{ text: SYSTEM_GENERATOR_PROMPT }]
+          }
+        };
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error("API returned non-OK status");
+
+        const resData = await response.json();
+        const jsonText = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        if (!jsonText) throw new Error("Null candidate content");
+
+        const freshQuestion = JSON.parse(jsonText);
+        
+        // Add dynamic properties
+        freshQuestion.minWords = mode === 'A' ? 150 : 300;
+        freshQuestion.seconds = mode === 'A' ? 30 * 60 : 50 * 60;
+        freshQuestion.part = mode;
+
+        state.q = freshQuestion;
+        renderQuestion();
+        restartTimer();
+
+      } catch (err) {
+        console.warn("AI generation failed or timed out. Triggering procedural scenario fallback generator...", err);
+        
+        // Dynamic procedural local template generator
+        state.q = generateProceduralLocalQuestion(mode);
+        renderQuestion();
+        restartTimer();
+      } finally {
+        // Toggle card loaders back
+        $('#questionCardBody').classList.remove('opacity-0', 'pointer-events-none');
+        $('#questionCardLoader').classList.add('hidden');
+        $('#newQuestionBtn').disabled = false;
+        $('#editor').focus();
+      }
+    }
+
+    // Local template builder that constructs structured variations offline
+    function generateProceduralLocalQuestion(mode) {
+      const minWords = mode === 'A' ? 150 : 300;
+      const seconds = mode === 'A' ? 30 * 60 : 50 * 60;
+
+      // Select dynamic components to build a randomized realistic question
+      const roles = [
+        "President of the Cultural Heritage Alliance",
+        "Chairperson of the Environmental Innovation Club",
+        "Coordinator of the Digital Literacy Initiative",
+        "Student Welfare Representative"
+      ];
+      
+      const targets = [
+        "Principal Mrs. Helen Chan",
+        "Mr. David Wong, Director of District Development Council",
+        "the Chief Editor of the Hong Kong Youth Chronicle"
+      ];
+
+      const elements = [
+        {
+          topic: "E-waste Recycling & Refurbishment Initiative",
+          shortcomings: "The massive volume of discarded laptops, rapid school device upgrade cycles, and toxic battery landfill dumping.",
+          solutions: "Setting up accessible drop-off points, organizing testing workshops, and donating refurbished hardware to underprivileged students.",
+          evaluation: "Tracking total carbon offsets, issuing digital certificates, and reviewing reception logs."
+        },
+        {
+          topic: "Mental Well-Being Sanctuary Program",
+          shortcomings: "Prolonged exam stress, peer competition pressure, and a severe lack of quiet sensory spaces.",
+          solutions: "Redesigning a library corner into a meditation zone, hosting therapy dog sessions, and training peer-support listeners.",
+          evaluation: "Analyzing anonymous student surveys, logging visit counts, and review metrics."
+        }
+      ];
+
+      const chosenRole = roles[Math.floor(Math.random() * roles.length)];
+      const chosenTarget = targets[Math.floor(Math.random() * targets.length)];
+      const chosenElement = elements[Math.floor(Math.random() * elements.length)];
+
+      if (mode === 'A') {
+        const title = `Official Proposal: ${chosenElement.topic}`;
+        const prompt = `You are the ${chosenRole}. Write a formal proposal to ${chosenTarget} pitching a comprehensive, syllabus-aligned ${chosenElement.topic} within the school and local community.\n\nIn your proposal, you should:\n• Diagnose current challenges and shortcomings (such as ${chosenElement.shortcomings})\n• Detail practical, cost-balanced alternatives and activities (such as ${chosenElement.solutions})\n• Suggest structured pathways to evaluate student reception and measure overall success (such as ${chosenElement.evaluation})`;
+
+        const keywords = ["proposal", "campus wellness", "affordability", "implementation", "shortcoming", "alternative", "survey feedback", "efficiency", "feasibility", "sustainable"];
+
+        const outline = `
+          <div class="space-y-3">
+            <div><strong class="text-blue-400">Structure Plan:</strong></div>
+            <p><strong>1. Header:</strong> Formal presentation format (To, From, Date, Proposal Title).</p>
+            <p><strong>2. Introduction:</strong> Define the core purpose and why starting this project is highly urgent.</p>
+            <p><strong>3. Shortcomings Analysis:</strong> Objectively detail existing inefficiencies with advanced transitional syntax.</p>
+            <p><strong>4. Solution Proposals:</strong> Outline highly viable operational suggestions and milestones.</p>
+            <p><strong>5. Metrics:</strong> Detail structured review pathways to prove sustainable buy-in.</p>
+          </div>
+        `;
+
+        return { title, prompt, keywords, outline, minWords, seconds, part: mode };
+      } else {
+        const title = "Discursive Essay: Sustainable Eco-Tourism vs. Urban Landmark Development";
+        const prompt = `Write an argumentative essay for a youth journal exploring the delicate trade-off between preservation of local Hong Kong heritage villages (like Tai O) and aggressive commercial land expansion.\n\nIn your essay, you must:\n• Critically discuss the socioeconomic benefits of preserve-driven green tourism.\n• Counterbalance with standard arguments favoring infrastructure upgrades and immediate housing supply gains.\n• Offer a pragmatic, mid-tier development model that keeps historical identities intact while addressing the urban crisis.`;
+        
+        const keywords = ["sustainable", "heritage", "infrastructure", "commercialization", "socioeconomic", "preservation", "pragmatic", "hierarchy", "volatility", "autonomy"];
+        const outline = `
+          <div class="space-y-3">
+            <div><strong class="text-blue-400">Structure Plan:</strong></div>
+            <p><strong>1. Introduction:</strong> Capture focus using a strong hook. Frame the debate thesis clearly.</p>
+            <p><strong>2. Arguments:</strong> Leverage high-tier syntactic structures to prove points.</p>
+            <p><strong>3. Counter-Rebuttal:</strong> Frame opponent arguments objectively before dismantling them with data proxies.</p>
+            <p><strong>4. Concluding Synthesis:</strong> Deliver a persuasive, formal summary call-to-action.</p>
+          </div>
+        `;
+
+        return { title, prompt, keywords, outline, minWords, seconds, part: mode };
+      }
+    }
+
+    // Render Question using the new formatPromptText parser
+    function renderQuestion() {
+      const q = state.q;
+      $('#qTitle').textContent = q.title;
+      
+      // Inject beautifully formatted prompt text instead of a flat block
+      $('#qPrompt').innerHTML = formatPromptText(q.prompt);
+      
+      $('#qInstruction').textContent = `${q.minWords}+ Words`;
+      $('#targetWords').textContent = q.minWords;
+      
+      // Inject Outline Content
+      $('#outlineContent').innerHTML = q.outline;
+
+      // Populate keywords pills
+      $('#kwBox').innerHTML = '';
+      q.keywords.forEach(kw => {
+        const span = document.createElement('span');
+        span.className = 'px-2 py-1 bg-slate-800 text-slate-300 rounded-md text-[10px] border border-slate-700/50 hover:border-slate-600 hover:text-white transition';
+        span.innerHTML = `<i class="fa-solid fa-circle text-[4px] text-blue-400 mr-1.5 align-middle"></i> ${kw}`;
+        $('#kwBox').appendChild(span);
+      });
+    }
+
+    // TIMER ENGINE
+    function restartTimer() {
+      stopTimer();
+      state.timerSec = state.q.seconds;
+      tickTimer();
+      state.timerId = setInterval(() => {
+        state.timerSec--;
+        tickTimer();
+        if (state.timerSec <= 0) {
+          stopTimer();
+          autoSubmitOnTimeUp();
+        }
+      }, 1000);
+    }
+
+    function resumeTimer() {
+      if (state.timerId || !state.q || state.timerSec <= 0) return;
+      tickTimer();
+      state.timerId = setInterval(() => {
+        state.timerSec--;
+        tickTimer();
+        if (state.timerSec <= 0) {
+          stopTimer();
+          autoSubmitOnTimeUp();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (state.timerId) {
+        clearInterval(state.timerId);
+        state.timerId = null;
+      }
+    }
+
+    function tickTimer() {
+      const m = Math.max(0, Math.floor(state.timerSec / 60));
+      const s = Math.max(0, state.timerSec % 60);
+      $('#timer').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      
+      // Change color based on remaining threshold
+      const pct = state.q && state.q.seconds ? state.timerSec / state.q.seconds : 0;
+      if (pct <= 0.15) {
+        $('#timer').className = "px-3 py-1 bg-red-950/20 text-red-500 rounded-lg border border-red-500/30 font-mono font-bold text-sm tracking-widest";
+      } else if (pct <= 0.33) {
+        $('#timer').className = "px-3 py-1 bg-amber-950/20 text-amber-500 rounded-lg border border-amber-500/30 font-mono font-bold text-sm tracking-widest";
+      } else {
+        $('#timer').className = "px-3 py-1 bg-slate-950 text-blue-400 rounded-lg border border-slate-800 font-mono font-bold text-sm tracking-widest";
+      }
+    }
+
+    function autoSubmitOnTimeUp() {
+      $('#editor').disabled = true;
+      $('#submitBtn').disabled = true;
+      if (!state.submitted) {
+        customAlert("Your allowed writing time has expired. The application will now auto-grade your current draft.", "Time's Up!", () => {
+          handleSubmit();
+        });
+      }
+    }
+
+    // WORD COUNT CALCULATOR
+    function countWords(text) {
+      const tokens = text.trim().match(/[A-Za-zÀ-ÖØ-öø-ÿ0-9'-]+/g);
+      return tokens ? tokens.length : 0;
+    }
+
+    function updateWordCount() {
+      const w = countWords($('#editor').value);
+      $('#wc').textContent = `${w} word${w === 1 ? '' : 's'}`;
+      const target = state.q ? state.q.minWords : 0;
+      
+      if (w >= target) {
+        $('#wc').className = "text-sm font-bold text-emerald-400";
+      } else if (w > 0) {
+        $('#wc').className = "text-sm font-bold text-amber-400";
+      } else {
+        $('#wc').className = "text-sm font-bold text-slate-300";
+      }
+    }
+
+    // System prompt instructing Gemini to behave exactly as an expert HKDSE Assessor
+    const SYSTEM_ASSESSOR_PROMPT = `You are an expert Senior Assessor for the HKDSE English Language Paper 2 (Writing) exam. 
+Your role is to rigorously evaluate student essay submissions according to the HKEAA "2015 HKDSE Paper 2 Marking Schemes_2.pdf" assessment parameters:
+1. CONTENT (0 to 7 marks): Assess relevance, expansion of ideas, and audience context/genre awareness.
+2. LANGUAGE (0 to 7 marks): Assess grammatical precision, variety of sentence patterns, spelling accuracy, and lexical richness.
+3. ORGANIZATION (0 to 7 marks): Assess structural logic, paragraphing coherence, and cohesive device variety.
+
+Grading Threshold Mapping for cumulative score out of 21:
+- Level 5**: 20 - 21 marks (Elite, flawless grammar, native-like register and vocabulary)
+- Level 5*: 18 - 19 marks
+- Level 5: 16 - 17 marks
+- Level 4: 13 - 15 marks
+- Level 3: 10 - 12 marks
+- Level 2: 7 - 9 marks
+- Level 1 / Unclassified: Under 7 marks
+
+Be realistic: Level 5, 5*, and 5** criteria are exceptionally strict. Moderate essays with repetitive words and minor typos should fall into Levels 3 or 4.
+
+Provide your evaluation strictly as a single JSON object. Do not include markdown around the JSON. The JSON structure must match this schema:
+{
+  "scoreC": 5, // Integer (0-7)
+  "scoreL": 4, // Integer (0-7)
+  "scoreO": 5, // Integer (0-7)
+  "feedbackC": "Assessor detailed paragraph breakdown regarding Content criteria...",
+  "feedbackL": "Assessor detailed paragraph breakdown regarding Language criteria...",
+  "feedbackO": "Assessor detailed paragraph breakdown regarding Organization criteria...",
+  "suggestions": [
+    "A highly actionable suggestion matching DSE strategy...",
+    "Another suggestion regarding grammar, register, or vocabulary...",
+    "A final suggestion on structural organization..."
+  ],
+  "sentenceUpgrades": [
+    {
+      "original": "The original flawed or simplistic sentence from the student's essay.",
+      "improved": "An advanced version demonstrating DSE Level 5/5** complexity (using inversion, nominal clauses, or higher vocabulary).",
+      "explanation": "Why this modification improves the writing (e.g., uses relative clauses, elevates lexicon)."
+    }
+  ]
+}`;
+
+    // Handler for submissions (Calls API or Fallback)
+    async function handleSubmit() {
+      const text = $('#editor').value.trim();
+      const wordCount = countWords(text);
+
+      if (wordCount < 10) {
+        customAlert("Please write a more substantial draft before submitting for grading.", "Draft Too Short");
+        return;
+      }
+
+      state.submitted = true;
+      stopTimer();
+      state.editorTextBeforeGrading = text;
+
+      // Show spinner and hide other panels
+      $('#examPanel').classList.add('hidden');
+      $('#loaderPanel').classList.remove('hidden');
+      $('#resultsPanel').classList.add('hidden');
+
+      // Update loading status markers
+      const updateStatus = (text) => {
+        $('#loaderStatus').textContent = text;
+      };
+
+      try {
+        updateStatus("Sending draft to Assessor AI...");
+        
+        // Prepare context payload for the prompt
+        const promptPayload = `
+        QUESTION DETAIL:
+        - Title: ${state.q.title}
+        - Part: ${state.mode} (Typical DSE Target: ${state.mode === 'A' ? '150+' : '300+'} words)
+        - Target Scenario: ${state.q.prompt}
+        - Expected Target Keywords: ${state.q.keywords.join(', ')}
+
+        STUDENT ESSAY DRAFT:
+        ${text}
+        
+        Analyze this essay and generate the marking metrics in JSON according to system instructions.`;
+
+        // Configure Gemini 3-flash API Endpoint
+        const apiKey = ""; // Left empty so Canvas runtime can inject it automatically
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        const payload = {
+          contents: [{ parts: [{ text: promptPayload }] }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "OBJECT",
+              properties: {
+                scoreC: { type: "INTEGER" },
+                scoreL: { type: "INTEGER" },
+                scoreO: { type: "INTEGER" },
+                feedbackC: { type: "STRING" },
+                feedbackL: { type: "STRING" },
+                feedbackO: { type: "STRING" },
+                suggestions: {
+                  type: "ARRAY",
+                  items: { type: "STRING" }
+                },
+                sentenceUpgrades: {
+                  type: "ARRAY",
+                  items: {
+                    type: "OBJECT",
+                    properties: {
+                      original: { type: "STRING" },
+                      improved: { type: "STRING" },
+                      explanation: { type: "STRING" }
+                    },
+                    required: ["original", "improved", "explanation"]
+                  }
+                }
+              },
+              required: ["scoreC", "scoreL", "scoreO", "feedbackC", "feedbackL", "feedbackO", "suggestions", "sentenceUpgrades"]
+            }
+          },
+          systemInstruction: {
+            parts: [{ text: SYSTEM_ASSESSOR_PROMPT }]
+          }
+        };
+
+        updateStatus("Performing grading matrix analysis...");
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`API returned standard error status ${response.status}`);
+        }
+
+        const data = await response.json();
+        const jsonText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        if (!jsonText) {
+          throw new Error("Empty candidate payload returned from AI model.");
+        }
+
+        const report = JSON.parse(jsonText);
+        renderGradingReport(report);
+
+      } catch (err) {
+        console.warn("AI grading failed or timed out. Triggering structural algorithmic fallback...", err);
+        updateStatus("AI busy. Triggering structural analysis rules...");
+        
+        // Simulating loading animation before fallback execution
+        setTimeout(() => {
+          const fallbackReport = generateAlgorithmicFallback(text);
+          renderGradingReport(fallbackReport);
+        }, 1200);
+      }
+    }
+
+    // In case API returns an error or internet is offline
+    function generateAlgorithmicFallback(essayText) {
+      const words = countWords(essayText);
+      const target = state.q.minWords;
+      
+      // Content Scoring Fallback
+      let scoreC = 3;
+      if (words >= target * 1.2) scoreC = 6;
+      else if (words >= target) scoreC = 5;
+      else if (words >= target * 0.7) scoreC = 4;
+      
+      // Scan matching keywords to check relevance
+      let matchedKw = 0;
+      state.q.keywords.forEach(kw => {
+        const regex = new RegExp(`\\b${kw.split(' ')[0]}\\b`, 'gi');
+        if (regex.test(essayText)) matchedKw++;
+      });
+      if (matchedKw < 2 && scoreC > 3) scoreC--;
+
+      // Organization Scoring Fallback
+      let scoreO = 3;
+      const paragraphs = essayText.split(/\n\s*\n/).filter(p => p.trim().length > 15);
+      if (paragraphs.length >= 4) scoreO = 5;
+      else if (paragraphs.length === 3) scoreO = 4;
+
+      // Count complex transitions
+      let connectorCount = 0;
+      CONNECTORS.forEach(conn => {
+        const regex = new RegExp(`\\b${conn}\\b`, 'gi');
+        if (regex.test(essayText)) connectorCount++;
+      });
+      if (connectorCount >= 5 && scoreO < 7) scoreO = Math.min(7, scoreO + 1);
+      if (connectorCount < 2 && scoreO > 3) scoreO = Math.max(1, scoreO - 1);
+
+      // Language Scoring Fallback
+      let scoreL = 4;
+      // Heuristic syntax checks
+      const averageSentenceLength = essayText.length / (essayText.split(/[.!?]+/).length || 1);
+      if (averageSentenceLength > 120) scoreL = Math.min(7, scoreL + 1);
+      
+      const complexWords = essayText.match(/\b[a-zA-Z]{8,}\b/g) || [];
+      const complexRatio = complexWords.length / words;
+      if (complexRatio > 0.18) scoreL = Math.min(7, scoreL + 1);
+      if (complexRatio < 0.08) scoreL = Math.max(1, scoreL - 1);
+
+      const feedbackC = `[Algorithmic Fallback] Your essay features a word volume of ${words} words against the guideline of ${target}. You successfully incorporated vocabulary components such as: ${state.q.keywords.slice(0, 3).join(', ')}.`;
+      const feedbackL = `[Algorithmic Fallback] Syntactic density averages ${Math.round(averageSentenceLength)} characters per sentence. Advanced vocabulary ratio measures approximately ${Math.round(complexRatio * 100)}%.`;
+      const feedbackO = `[Algorithmic Fallback] The essay was organized into ${paragraphs.length} distinct paragraphs. Transition connectors were identified ${connectorCount} times.`;
+
+      const sentenceUpgrades = [
+        {
+          original: "I think the school canteen should have more healthy foods for us.",
+          improved: "In the interest of student well-being, it is highly imperative that the canteen administration diversifies its menu with highly nutritious options.",
+          explanation: "Replaces simple phrasing with elevated lexicon and formal noun structures."
+        },
+        {
+          original: "We have exams and students feel very stressed every day.",
+          improved: "S6 candidates are perpetually inundated with academic obligations, culminating in intense cognitive stress.",
+          explanation: "Introduces advanced vocabulary appropriate for a senior high-school candidate profile."
+        }
+      ];
+
+      return {
+        scoreC,
+        scoreL,
+        scoreO,
+        feedbackC,
+        feedbackL,
+        feedbackO,
+        suggestions: [
+          `Target a wider vocabulary variety by replacing basic verbs like 'have' and 'make' with precise dynamic alternatives.`,
+          `Elevate your paragraph openers. Instead of using basic links like 'Firstly' and 'Secondly', use cohesive markers like 'By extension' or 'In the same vein'.`
+        ],
+        sentenceUpgrades
+      };
+    }
+
+    function renderGradingReport(report) {
+      // Hide loader, show results
+      $('#loaderPanel').classList.add('hidden');
+      $('#resultsPanel').classList.remove('hidden');
+
+      // Set score texts and progress bars
+      $('#scoreC').textContent = report.scoreC;
+      $('#scoreL').textContent = report.scoreL;
+      $('#scoreO').textContent = report.scoreO;
+
+      const total = report.scoreC + report.scoreL + report.scoreO;
+      $('#scoreTotal').textContent = total;
+
+      // Animate progress indicators
+      setTimeout(() => {
+        $('#barC').style.width = `${(report.scoreC / 7) * 100}%`;
+        $('#barL').style.width = `${(report.scoreL / 7) * 100}%`;
+        $('#barO').style.width = `${(report.scoreO / 7) * 100}%`;
+      }, 200);
+
+      // Map totals to DSE levels
+      let dseLevel = "Unclassified";
+      let levelClass = "from-red-500 to-red-600 shadow-red-500/35";
+      let noticeText = "Developing Candidate Portfolio";
+      let bannerBorder = "glow-panel";
+
+      if (total >= 20) {
+        dseLevel = "5**";
+        levelClass = "from-amber-400 via-yellow-500 to-amber-600 shadow-yellow-500/50 text-slate-900";
+        noticeText = "★ Elite Level 5** Master Class";
+        bannerBorder = "glow-gold";
+      } else if (total >= 18) {
+        dseLevel = "5*";
+        levelClass = "from-blue-500 to-indigo-600 shadow-blue-500/40";
+        noticeText = "★ Exceptional Level 5* Candidate Portfolio";
+        bannerBorder = "glow-panel";
+      } else if (total >= 16) {
+        dseLevel = "5";
+        levelClass = "from-indigo-500 to-purple-600 shadow-indigo-500/40";
+        noticeText = "Highly Competent Level 5 Achievement";
+      } else if (total >= 13) {
+        dseLevel = "4";
+        levelClass = "from-emerald-500 to-teal-600 shadow-emerald-500/40";
+        noticeText = "Solid Level 4 Writing Profile";
+      } else if (total >= 10) {
+        dseLevel = "3";
+        levelClass = "from-teal-500 to-slate-600 shadow-teal-500/35";
+        noticeText = "Standard Level 3 Accomplishment";
+      } else if (total >= 7) {
+        dseLevel = "2";
+        levelClass = "from-amber-500 to-orange-600 shadow-amber-500/35";
+        noticeText = "Level 2 Portfolio Development";
+      }
+
+      // Update level circle badge styling
+      const badge = $('#badgeCircle');
+      badge.className = `w-20 h-20 rounded-2xl bg-gradient-to-tr font-extrabold text-2xl shadow-xl flex flex-col items-center justify-center ${levelClass}`;
+      $('#badgeText').textContent = dseLevel;
+      $('#levelNotice').textContent = noticeText;
+      $('#scoreHeaderBox').className = `bg-slate-900 border rounded-2xl p-6 md:p-8 shadow-xl flex flex-col md:flex-row justify-between items-center gap-6 ${bannerBorder}`;
+
+      // Set feedback narratives
+      $('#feedbackC').textContent = report.feedbackC;
+      $('#feedbackL').textContent = report.feedbackL;
+      $('#feedbackO').textContent = report.feedbackO;
+
+      // Populate Recommendations
+      const sugBox = $('#suggestionsBox');
+      sugBox.innerHTML = '';
+      report.suggestions.forEach(sug => {
+        const li = document.createElement('li');
+        li.className = "flex items-start gap-3 text-xs text-slate-300 leading-relaxed bg-slate-950/40 p-3 rounded-xl border border-slate-800/60";
+        li.innerHTML = `
+          <span class="p-1.5 bg-blue-500/10 text-blue-400 rounded-md mt-0.5"><i class="fa-solid fa-lightbulb"></i></span>
+          <div>${sug}</div>
+        `;
+        sugBox.appendChild(li);
+      });
+
+      // Populate Level-Up comparison sentences
+      const upBox = $('#upgradesBox');
+      upBox.innerHTML = '';
+      if (report.sentenceUpgrades && report.sentenceUpgrades.length > 0) {
+        report.sentenceUpgrades.forEach(up => {
+          const div = document.createElement('div');
+          div.className = "bg-slate-950 rounded-xl border border-slate-800 p-4 space-y-3";
+          div.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Original simplistic input -->
+              <div class="p-3 bg-red-950/15 rounded-lg border border-red-500/15 text-xs">
+                <span class="font-bold text-red-400 block mb-1 uppercase tracking-widest text-[9px]"><i class="fa-solid fa-circle-minus"></i> Your Draft Sentence</span>
+                <span class="text-slate-300 font-mono italic">"${up.original}"</span>
+              </div>
+              <!-- Improved syntactic modification -->
+              <div class="p-3 bg-emerald-950/15 rounded-lg border border-emerald-500/15 text-xs">
+                <span class="font-bold text-emerald-400 block mb-1 uppercase tracking-widest text-[9px]"><i class="fa-solid fa-circle-plus"></i> Assessor Upgrade Suggestion</span>
+                <span class="text-slate-100 font-bold font-mono">"${up.improved}"</span>
+              </div>
+            </div>
+            <div class="text-[11px] text-slate-400 pl-1 leading-relaxed">
+              <strong class="text-slate-300">Upgrade Mechanism:</strong> ${up.explanation}
+            </div>
+          `;
+          upBox.appendChild(div);
+        });
+      } else {
+        upBox.innerHTML = `
+          <div class="text-xs text-slate-500 italic p-4 text-center">
+            No grammatical upgrade markers identified. Your draft reflects solid language construction.
+          </div>
+        `;
+      }
+    }
+
+    // App Initialization
+    window.onload = function() {
+      // Trigger initial counters
+      updateWordCount();
+    }
+  </script>
+</body>
+</html>

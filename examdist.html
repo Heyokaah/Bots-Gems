@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Exam Script Distribution (Minimise Own Group)</title>
+  <title>Exam Script Distribution (Minimise Own Group & Diversify)</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   
-  <!-- Custom CSS Variables and Scrollbar styling matching requested theme -->
+  <!-- Custom CSS Variables and Scrollbar styling -->
   <style>
     :root {
       --bg: #0b1220;
@@ -114,7 +114,6 @@
 </head>
 
 <body class="min-h-screen py-6 px-4 md:px-8">
-  <!-- Toast notification system container -->
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <div class="max-w-7xl mx-auto">
@@ -124,12 +123,11 @@
           <span>📝</span> Exam Script Distribution App
         </h1>
         <p class="text-xs md:text-sm text-slate-300 mt-1 max-w-2xl">
-          Enter teachers, group targets, and question volumes. Run the flow solver to 
-          <span class="text-indigo-300 font-semibold underline decoration-indigo-500 decoration-2">minimise grading own classes</span> while balancing exact target workloads.
+          Assign grading workloads fairly while keeping teachers from marking their own classes, and spreading grading variety to experience different cohorts.
         </p>
       </div>
 
-      <!-- Quick Setup Preset triggers for simple testing -->
+      <!-- Quick Setup Preset triggers -->
       <div class="flex flex-wrap gap-2">
         <button class="btn btn-secondary text-xs px-3 py-2 rounded-xl text-slate-200 font-semibold" onclick="loadDemoPreset('school')">
           🏫 Load High School Preset
@@ -156,10 +154,9 @@
           </div>
 
           <div class="p-5 flex flex-col gap-6">
-            <!-- Split forms for Teacher Input vs Group/Question management -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               
-              <!-- Left Mini Column: Teachers Entry -->
+              <!-- Left Column: Teachers Entry -->
               <div class="flex flex-col gap-4">
                 <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-1">Add Teacher Details</h3>
                 
@@ -185,7 +182,7 @@
                 </button>
               </div>
 
-              <!-- Right Mini Column: Groups and Questions Setup -->
+              <!-- Right Column: Groups and Questions Setup -->
               <div class="flex flex-col gap-4 border-t md:border-t-0 md:border-l border-slate-800 md:pl-6">
                 <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-1">Add Groups & Questions</h3>
                 
@@ -222,15 +219,14 @@
               </div>
             </div>
 
-            <!-- Render List of current active teachers -->
             <div class="border-t border-slate-800 pt-5">
               <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-3">Registered Teachers</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[220px] overflow-y-auto pr-1" id="teacherList">
-                <!-- Teacher items render here dynamically -->
+                <!-- Dynamic Content -->
               </div>
             </div>
 
-            <!-- Section 2: Count Table -->
+            <!-- Table of inputs -->
             <div class="border-t border-slate-800 pt-5">
               <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-3">Scripts count matrix</h3>
               <div class="tableWrap overflow-x-auto border border-slate-800 rounded-xl bg-slate-950/40">
@@ -269,6 +265,28 @@
               <div class="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-center">
                 <div class="text-[10px] text-slate-400 uppercase font-semibold">Questions</div>
                 <div class="text-lg font-bold text-white mt-1 font-mono" id="kQuestions">0</div>
+              </div>
+            </div>
+
+            <!-- Optimization Settings Panel -->
+            <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 flex flex-col gap-3">
+              <h3 class="text-xs font-bold text-slate-300 tracking-wider uppercase mb-1 flex items-center gap-1.5">
+                <span>⚙️</span> Solver Parameters
+              </h3>
+              
+              <div class="flex items-start gap-3 p-1">
+                <div class="flex items-center h-5">
+                  <input id="chkEncourageVariety" type="checkbox" checked
+                    class="w-4 h-4 rounded text-indigo-600 bg-slate-950 border-slate-700 focus:ring-indigo-500 focus:ring-offset-slate-900 focus:ring-2" />
+                </div>
+                <div class="text-xs">
+                  <label for="chkEncourageVariety" class="font-bold text-slate-200 block cursor-pointer mb-0.5">
+                    Encourage Group Variety
+                  </label>
+                  <p class="text-[10px] text-slate-400 leading-normal">
+                    Favour spreading grading scripts across multiple student cohorts so teachers experience a wider range of answers.
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -339,7 +357,10 @@
         <div class="p-5 flex flex-col gap-6">
           <!-- Main Output Matrix -->
           <div>
-            <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-3">Teacher vs Group Distribution Matrix</h3>
+            <h3 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-3 flex items-center justify-between">
+              <span>Teacher vs Group Distribution Matrix</span>
+              <span class="text-[10px] bg-slate-800 text-indigo-300 normal-case px-2 py-0.5 rounded-md font-mono font-normal">Minimises Own Grading</span>
+            </h3>
             <div class="tableWrap overflow-x-auto border border-slate-800 rounded-xl bg-slate-950/40">
               <table id="outputTable" class="w-full text-left min-w-[600px]"></table>
             </div>
@@ -372,6 +393,7 @@
       questions: [],
       counts: new Map(), // key `${group}||${question}` -> integer
       lastResult: null,
+      encourageVariety: true,
     };
 
     const el = (id) => document.getElementById(id);
@@ -617,7 +639,7 @@
       }
     }
 
-    // Auto balance utility function (fixes discrepancies)
+    // Auto balance utility function
     function autoBalanceWorkloads() {
       const scriptTotal = totalScripts();
       if (scriptTotal === 0) {
@@ -648,7 +670,6 @@
         });
 
         let remainder = scriptTotal - sum;
-        // Distribute remainder sequentially to teachers with the largest fractional shares
         const fractions = state.teachers.map((t, idx) => ({
           idx,
           frac: ((t.students / totalT) * scriptTotal) - newTargets[idx]
@@ -860,18 +881,26 @@
 
       const result = state.lastResult;
       const loadMap = {};
-      for (const t of state.teachers) loadMap[t.name] = 0;
+      const cohortMap = {};
+      for (const t of state.teachers) {
+        loadMap[t.name] = 0;
+        cohortMap[t.name] = new Set();
+      }
 
       if (result && result.ok && result.alloc) {
         for (const [k, cnt] of result.alloc.entries()) {
-          const [tName] = k.split("||");
-          if (loadMap[tName] !== undefined) loadMap[tName] += cnt;
+          const [tName, g] = k.split("||");
+          if (loadMap[tName] !== undefined && cnt > 0) {
+            loadMap[tName] += cnt;
+            cohortMap[tName].add(g);
+          }
         }
       }
 
       state.teachers.forEach(t => {
         const assigned = loadMap[t.name] || 0;
         const target = t.students || 0;
+        const distinctCohorts = cohortMap[t.name] ? cohortMap[t.name].size : 0;
         const percent = target > 0 ? Math.min(100, (assigned / target) * 100) : 0;
 
         let barColor = "bg-blue-500";
@@ -903,10 +932,14 @@
           <div class="w-full bg-slate-850 rounded-full h-2 overflow-hidden">
             <div class="${barColor} h-2 transition-all duration-500 rounded-full" style="width: ${percent}%"></div>
           </div>
-          <div class="flex items-center gap-1.5 text-[10px] mt-0.5">
+          <div class="flex items-center justify-between text-[10px] mt-0.5">
             ${ownCount > 0 
               ? `<span class="text-amber-400 font-semibold flex items-center gap-1">⚠️ matches own group: ${ownCount}</span>` 
               : `<span class="text-emerald-400 font-medium flex items-center gap-1">✨ no own-group conflicts</span>`
+            }
+            ${distinctCohorts > 0 
+              ? `<span class="text-indigo-300 font-semibold bg-indigo-950/40 border border-indigo-900/40 px-1.5 py-0.2 rounded">${distinctCohorts} cohorts graded</span>`
+              : ''
             }
           </div>
         `;
@@ -914,7 +947,7 @@
       });
     }
 
-    // KPI Refresh and Balancer Visual alerts
+    // KPI Refresh and alerts
     function updateKPIs(result = null) {
       const scrTot = totalScripts();
       const studTot = totalStudents();
@@ -1057,7 +1090,7 @@
       }
     }
 
-    // Optimized Formulation Engine (Solving grouping bottlenecks instead of tokens)
+    // Optimized Formulation Engine
     function generateDistribution() {
       const teachers = state.teachers;
       const groups = state.groups;
@@ -1073,7 +1106,7 @@
         return { ok: false, message: `Discrepancy active: total workload target quota (${totalStud}) must be identical to script count (${total}).` };
       }
 
-      // Compact Formulation Matrix: Aggregate identical group-question pairs instead of duplicating individual scripts as single tokens
+      // Compact Formulation Matrix
       const activeGQ = [];
       for (const g of groups) {
         for (const q of questions) {
@@ -1092,7 +1125,7 @@
       const N = TT + 1;
 
       const mcmf = new MinCostMaxFlow(N);
-      const ownPenalty = 1000; // Minimize Own Group Matched Costs
+      const ownPenalty = 1000000; // Absolute priority limit to avoid grading own classes
 
       // Edges configuration
       for (let i = 0; i < activeGQ.length; i++) {
@@ -1103,8 +1136,29 @@
         const item = activeGQ[i];
         for (let j = 0; j < teachers.length; j++) {
           const t = teachers[j];
-          const cost = t.groups.has(item.g) ? ownPenalty : 0;
-          mcmf.addEdge(nodeGQStart + i, nodeTeacherStart + j, item.count, cost);
+          const isOwn = t.groups.has(item.g);
+          const baseCost = isOwn ? ownPenalty : 0;
+
+          // If variety optimization is checked, add incremental penalty layers
+          if (state.encourageVariety && !isOwn) {
+            const cap = item.count;
+            if (cap <= 2) {
+              // Tiny count, no need to partition
+              mcmf.addEdge(nodeGQStart + i, nodeTeacherStart + j, cap, baseCost);
+            } else {
+              // Split into piecewise cost tiers to discourage concentrating too much of one group-question onto a single teacher
+              const tier1 = Math.max(1, Math.floor(cap * 0.3));
+              const tier2 = Math.max(1, Math.floor(cap * 0.4));
+              const tier3 = cap - tier1 - tier2;
+
+              if (tier1 > 0) mcmf.addEdge(nodeGQStart + i, nodeTeacherStart + j, tier1, baseCost + 0);
+              if (tier2 > 0) mcmf.addEdge(nodeGQStart + i, nodeTeacherStart + j, tier2, baseCost + 5);
+              if (tier3 > 0) mcmf.addEdge(nodeGQStart + i, nodeTeacherStart + j, tier3, baseCost + 15);
+            }
+          } else {
+            // Straightforward direct edge
+            mcmf.addEdge(nodeGQStart + i, nodeTeacherStart + j, item.count, baseCost);
+          }
         }
       }
 
@@ -1119,7 +1173,7 @@
         return { ok: false, message: "A mathematically correct assignment could not be found with current limits. Please verify allocations." };
       }
 
-      // Parse assignment output from residual network
+      // Parse assignment output
       const alloc = new Map();
       let ownAssigned = 0;
 
@@ -1146,7 +1200,7 @@
 
       return { 
         ok: true, 
-        message: `Perfect distribution found! Total scripts matching teachers' own groups minimized to ${ownAssigned} across all sets.`, 
+        message: `Optimization complete! Handled ${total} script assignments. Minimised own-group count to ${ownAssigned} across all sets.`, 
         alloc, 
         ownAssigned 
       };
@@ -1235,15 +1289,33 @@
         const tr = document.createElement("tr");
         tr.className = "border-b border-slate-800/60 hover:bg-slate-900/10";
         
+        // Count distinct cohorts assigned to this teacher
+        const assignedCohorts = new Set();
+        let rowTotal = 0;
+        for (const g of groups) {
+          let cellTotal = 0;
+          for (const q of questions) {
+            cellTotal += matrix[t.name][g][q];
+          }
+          if (cellTotal > 0) {
+            assignedCohorts.add(g);
+          }
+          rowTotal += cellTotal;
+        }
+
         const tdName = document.createElement("td");
         tdName.className = "p-3 text-xs";
+        
+        const varietyBadge = assignedCohorts.size > 0 
+          ? `<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] bg-slate-800 text-indigo-300 font-bold border border-slate-700/60">${assignedCohorts.size} cohorts graded</span>`
+          : `<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] bg-slate-850 text-slate-500">0 cohorts</span>`;
+
         tdName.innerHTML = `
           <div class="font-bold text-slate-200">${t.name}</div>
           <div class="text-[10px] text-slate-400 mt-1">Teaches: <span class="font-medium text-slate-300">${[...t.groups].join(", ") || "None"}</span></div>
+          <div class="mt-0.5">${varietyBadge}</div>
         `;
         tr.appendChild(tdName);
-
-        let rowTotal = 0;
 
         for (const g of groups) {
           let lines = [];
@@ -1253,11 +1325,9 @@
             if (v > 0) lines.push(`${q}:${v}`);
             cellTotal += v;
           }
-          rowTotal += cellTotal;
           colTotals[g] += cellTotal;
 
           const td = document.createElement("td");
-          // Highlight own classes matching to alert visual patterns of optimization
           const isOwnGroup = t.groups.has(g);
           td.className = `p-3 text-xs text-center font-mono ${cellTotal > 0 ? 'text-slate-200' : 'text-slate-600'} ${isOwnGroup && cellTotal > 0 ? 'bg-amber-950/20 border border-amber-900/30 font-bold text-amber-300' : ''}`;
           td.innerHTML = lines.length ? lines.join("<br/>") : "-";
@@ -1388,7 +1458,7 @@
 
       let csv = [];
 
-      // SECTION 1: Matrix layout (Teacher vs Group)
+      // SECTION 1: Matrix layout
       csv.push("--- SECTION 1: SCRIPT DISTRIBUTION MATRIX (Teacher x Group) ---");
       let headers1 = ["Teacher Name", ...groups, "Total Assigned", "Target Workload", "Teaches Groups"];
       csv.push(headers1.map(csvCell).join(","));
@@ -1513,7 +1583,7 @@
       showToast("Consolidated CSV report download triggered successfully!", "success");
     }
 
-    // Presets loaders for immediate functional demonstration
+    // Presets loaders
     function loadDemoPreset(type) {
       state.lastResult = null;
       if (type === "school") {
@@ -1526,47 +1596,55 @@
         ];
         
         state.counts.clear();
-        // Class 10A script counts
+        // Class 10A script counts (Total 35)
         setCount("Class-10A", "Q1", 10);
         setCount("Class-10A", "Q2", 10);
         setCount("Class-10A", "Q3", 8);
-        setCount("Class-10A", "Q4", 7); // Total 35
-        // Class 10B script counts
+        setCount("Class-10A", "Q4", 7);
+        // Class 10B script counts (Total 30)
         setCount("Class-10B", "Q1", 8);
         setCount("Class-10B", "Q2", 8);
         setCount("Class-10B", "Q3", 7);
-        setCount("Class-10B", "Q4", 7); // Total 30
-        // Class 10C script counts
+        setCount("Class-10B", "Q4", 7);
+        // Class 10C script counts (Total 35)
         setCount("Class-10C", "Q1", 9);
         setCount("Class-10C", "Q2", 9);
         setCount("Class-10C", "Q3", 9);
-        setCount("Class-10C", "Q4", 8); // Total 35
+        setCount("Class-10C", "Q4", 8);
         
         showToast("Loaded high school demo preset successfully!", "success");
       } else if (type === "university") {
-        state.groups = ["Section-A", "Section-B"];
+        state.groups = ["Section-A", "Section-B", "Section-C", "Section-D"];
         state.questions = ["Part-I", "Part-II"];
         state.teachers = [
           { id: uid("t"), name: "Prof. Evans (Teaches Sec-A)", groups: new Set(["Section-A"]), students: 40 },
-          { id: uid("t"), name: "Prof. Foster (Teaches Sec-B)", groups: new Set(["Section-B"]), students: 40 }
+          { id: uid("t"), name: "Prof. Foster (Teaches Sec-B)", groups: new Set(["Section-B"]), students: 40 },
+          { id: uid("t"), name: "Dr. Ghosh (Teaches Sec-C)", groups: new Set(["Section-C"]), students: 40 },
+          { id: uid("t"), name: "Prof. Harris (Teaches Sec-D)", groups: new Set(["Section-D"]), students: 40 }
         ];
         
         state.counts.clear();
+        // Section A (Total 40)
         setCount("Section-A", "Part-I", 20);
         setCount("Section-A", "Part-II", 20);
+        // Section B (Total 40)
         setCount("Section-B", "Part-I", 20);
         setCount("Section-B", "Part-II", 20);
+        // Section C (Total 40)
+        setCount("Section-C", "Part-I", 20);
+        setCount("Section-C", "Part-II", 20);
+        // Section D (Total 40)
+        setCount("Section-D", "Part-I", 20);
+        setCount("Section-D", "Part-II", 20);
         
         showToast("Loaded university demo preset successfully!", "success");
       }
       
-      // Auto run flow solver to immediately display visuals on sample load
       const res = generateDistribution();
       state.lastResult = res;
       renderAll();
     }
 
-    // Bind Controls
     el("btnGenerate").onclick = () => {
       const result = generateDistribution();
       state.lastResult = result;
@@ -1576,6 +1654,13 @@
         showToast(result.message, "error");
       }
       renderOutput(result);
+    };
+
+    el("chkEncourageVariety").onchange = (e) => {
+      state.encourageVariety = e.target.checked;
+      showToast(`Group variety optimization ${state.encourageVariety ? 'enabled' : 'disabled'}. Recalculate to apply.`, "info");
+      state.lastResult = null;
+      renderOutput(null);
     };
 
     el("btnDownloadCSV").onclick = downloadCSV;
@@ -1591,7 +1676,7 @@
       renderAll();
     };
 
-    // Load initial high school demonstration layout on launch
+    // Load initial high school layout on launch
     window.onload = function() {
       loadDemoPreset("school");
     };
